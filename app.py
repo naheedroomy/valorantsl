@@ -15,7 +15,7 @@ app = FastAPI()
 allowed_origins = [
     "http://localhost",  # For local development
     "http://127.0.0.1",  # For local development
-    # Add your server's IP address or domain name here for production
+    "http://localhost:3000",  # React development server
 ]
 
 # Add CORS middleware
