@@ -1,0 +1,6 @@
+fastapi
+pydantic
+fastapi-discord
+uvicorn
+itsdangerous
+streamlit
