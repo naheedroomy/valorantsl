@@ -1,7 +1,8 @@
-from fastapi import APIRouter, Depends, Request
-from fastapi_discord import DiscordOAuthClient, User
-from fastapi.responses import RedirectResponse
 import os
+
+from fastapi import APIRouter, Depends, Request
+from fastapi.responses import RedirectResponse
+from fastapi_discord import DiscordOAuthClient, User
 
 # Load Discord OAuth2 Configuration from environment variables
 DISCORD_CLIENT_ID = os.getenv('DISCORD_CLIENT_ID')
@@ -25,20 +26,24 @@ discord = DiscordOAuthClient(
 
 discord_router = APIRouter(prefix="/discord", tags=["discord"])
 
+
 @discord_router.on_event("startup")
 async def on_startup():
     await discord.init()
+
 
 @discord_router.get("/login")
 async def login():
     return {"url": discord.oauth_login_url}
 
+
 @discord_router.get("/callback")
 async def callback(request: Request, code: str):
     token, refresh_token = await discord.get_access_token(code)
     # Redirect to the React app with the token in the query parameters
-    redirect_url = f"http://localhost:3000?access_token={token}&refresh_token={refresh_token}"
+    redirect_url = f"http://localhost:3000/Registration?access_token={token}&refresh_token={refresh_token}"
     return RedirectResponse(url=redirect_url)
+
 
 @discord_router.get("/user", dependencies=[Depends(discord.requires_authorization)], response_model=User)
 async def get_user(user: User = Depends(discord.user)):

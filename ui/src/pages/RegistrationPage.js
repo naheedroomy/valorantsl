@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
-const App = () => {
+const Registration = () => {
   const [user, setUser] = useState(null);
 
   useEffect(() => {
@@ -53,4 +53,4 @@ const App = () => {
   );
 };
 
-export default App;
+export default Registration;

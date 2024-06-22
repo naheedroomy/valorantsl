@@ -4,3 +4,4 @@ fastapi-discord
 uvicorn
 itsdangerous
 streamlit
+mongoengine
