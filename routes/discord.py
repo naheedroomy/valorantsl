@@ -1,8 +1,12 @@
+import json
 import os
 
 from fastapi import APIRouter, Depends, Request
+from fastapi.responses import JSONResponse
 from fastapi.responses import RedirectResponse
 from fastapi_discord import DiscordOAuthClient, User
+
+from models.db.valorant import MongoAccountResponseModel
 
 # Load Discord OAuth2 Configuration from environment variables
 DISCORD_CLIENT_ID = os.getenv('DISCORD_CLIENT_ID')
@@ -48,3 +52,13 @@ async def callback(request: Request, code: str):
 @discord_router.get("/user", dependencies=[Depends(discord.requires_authorization)], response_model=User)
 async def get_user(user: User = Depends(discord.user)):
     return user
+
+
+@discord_router.get("/{discord_id}")
+async def get_discord_user(discord_id: int):
+    user = MongoAccountResponseModel.objects(
+        discord_id=discord_id
+    )
+    if user:
+        return JSONResponse(content=json.loads(user.to_json()))
+    return None
