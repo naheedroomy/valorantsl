@@ -51,11 +51,10 @@ async def get_rank_details(puuid: str):
         }
 
 
-@valorant.post("/rank/{puuid}/{discord_id}/{discord_username}/{discord_global_username}", response_model=SavedAccountResponseModel)
+@valorant.post("/rank/{puuid}/{discord_id}/{discord_username}/", response_model=SavedAccountResponseModel)
 async def save_rank_details(puuid: str,
                             discord_id: int,
-                            discord_username: str,
-                            discord_global_username: str):
+                            discord_username: str):
     async with aiohttp.ClientSession() as session:
         headers_henrik = {
             'Authorization': f'{API_TOKEN}'
@@ -91,7 +90,6 @@ async def save_rank_details(puuid: str,
             rank_details=rank_details,
             discord_id=discord_id,
             discord_username=discord_username,
-            discord_global_username=discord_global_username
         )
 
         # Save to database

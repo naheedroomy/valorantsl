@@ -33,5 +33,4 @@ class MongoAccountResponseModel(Document):
     region = StringField(required=True)
     discord_id = IntField(required=True, unique=True)
     discord_username = StringField(required=True, unique=True)
-    discord_global_username = StringField(required=True)
     rank_details = EmbeddedDocumentField(MongoRankDetailsModel)
