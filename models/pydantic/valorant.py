@@ -41,3 +41,4 @@ class SavedAccountResponseModel(BaseModel):
     rank_details: RankDetailsModel
     discord_id: int
     discord_username: str
+    discord_global_username: str

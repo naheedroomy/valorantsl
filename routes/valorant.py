@@ -51,17 +51,18 @@ async def get_rank_details(puuid: str):
         }
 
 
-@valorant.post("/rank/{puuid}", response_model=SavedAccountResponseModel)
+@valorant.post("/rank/{puuid}/{discord_id}/{discord_username}/{discord_global_username}", response_model=SavedAccountResponseModel)
 async def save_rank_details(puuid: str,
                             discord_id: int,
-                            discord_username: str):
+                            discord_username: str,
+                            discord_global_username: str):
     async with aiohttp.ClientSession() as session:
         headers_henrik = {
             'Authorization': f'{API_TOKEN}'
         }
 
         try:
-            account_url = f'{API_BASE_URL}/valorant/v1/by-puuid/account/{puuid}/{discord_id}/{discord_username}'
+            account_url = f'{API_BASE_URL}/valorant/v1/by-puuid/account/{puuid}'
             acc_details_json = await fetch_json(session, account_url, headers_henrik)
             acc_region = acc_details_json['data']['region']
             acc_name = acc_details_json['data']['name']
@@ -89,7 +90,8 @@ async def save_rank_details(puuid: str,
             region=acc_region,
             rank_details=rank_details,
             discord_id=discord_id,
-            discord_username=discord_username
+            discord_username=discord_username,
+            discord_global_username=discord_global_username
         )
 
         # Save to database
@@ -106,7 +108,7 @@ async def save_rank_details(puuid: str,
         return account_response_json
 
 
-@valorant.get("/leaderboard", response_model=List[AccountResponseModel])
+@valorant.get("/leaderboard", response_model=List[SavedAccountResponseModel])
 async def get_leaderboard(
         page: int = Query(1, ge=1),
         page_size: int = Query(10, ge=1, le=100)
