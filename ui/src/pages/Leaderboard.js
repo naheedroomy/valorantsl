@@ -33,7 +33,7 @@ const useLeaderboard = (page) => {
     const [error, setError] = useState(null);
 
     // Set a constant page size
-    const pageSize = 25;
+    const pageSize = 100;
 
     useEffect(() => {
         const fetchLeaderboard = async () => {
@@ -62,9 +62,9 @@ const StyledContainer = styled(Container)(({theme}) => ({
 
 const StyledTableCell = styled(TableCell)(({theme}) => ({
     '&.rank-column': {
-        width: '5%', // Adjust the width as needed
+        width: '2%', // Adjust the width as needed
     },
-    width: '33%',
+    width: '10%',
 }));
 
 const StyledTableRow = styled(TableRow)(({theme}) => ({
@@ -92,7 +92,7 @@ const LeaderboardTable = ({leaderboard, page, pageSize}) => (
         <Table>
             <TableHead>
                 <TableRow>
-                    <StyledTableCell className="rank-column">Rank</StyledTableCell> {/* Add Rank header */}
+                    <StyledTableCell className="rank-column"></StyledTableCell> {/* Add Rank header */}
                     <StyledTableCell>Name</StyledTableCell>
                     <StyledTableCell>Elo</StyledTableCell>
                     <StyledTableCell>Rank</StyledTableCell>
