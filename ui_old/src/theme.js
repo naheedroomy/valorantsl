@@ -18,7 +18,7 @@ const darkTheme = createTheme({
   },
   typography: {
     fontFamily: '"Source Sans Pro", "Helvetica", "Arial", sans-serif',
-    fontSize: 15,
+    fontSize: 16,
     fontWeight: 'bold',
     h4: {
       fontFamily: '"Source Sans Pro", "Helvetica", "Arial", sans-serif',

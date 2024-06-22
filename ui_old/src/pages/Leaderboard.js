@@ -106,7 +106,7 @@ const LeaderboardTable = ({leaderboard, page, pageSize}) => (
                         </StyledTableCell> {/* Calculate rank */}
                         <StyledTableCell>
                             {player.name}
-                            <CustomTooltip title={`${player.name}#${player.tag}`}>
+                            <CustomTooltip title={`${player.name} #${player.tag}`}>
                                 <IconButton
                                     component="a"
                                     href={`https://tracker.gg/valorant/profile/riot/${player.name}%23${player.tag}/overview`}
