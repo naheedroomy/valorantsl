@@ -43,6 +43,8 @@ const Registration = () => {
         <div>
           <h2>Welcome, {user.username}!</h2>
           <p>ID: {user.id}</p>
+          <p>Global Name: {user.global_name}</p>
+          <p>Username: {user.username}</p>
           <p>Email: {user.email}</p>
           <img src={user.avatar} alt="avatar" />
         </div>

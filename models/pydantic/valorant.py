@@ -1,5 +1,4 @@
 from pydantic import BaseModel
-from typing import Dict, Any, Optional
 
 
 class ImagesModel(BaseModel):
@@ -32,3 +31,13 @@ class AccountResponseModel(BaseModel):
     tag: str
     region: str
     rank_details: RankDetailsModel
+
+
+class SavedAccountResponseModel(BaseModel):
+    puuid: str
+    name: str
+    tag: str
+    region: str
+    rank_details: RankDetailsModel
+    discord_id: int
+    discord_username: str

@@ -31,4 +31,6 @@ class MongoAccountResponseModel(Document):
     name = StringField(required=True)
     tag = StringField(required=True)
     region = StringField(required=True)
+    discord_id = IntField(required=True)
+    discord_username = StringField(required=True)
     rank_details = EmbeddedDocumentField(MongoRankDetailsModel)

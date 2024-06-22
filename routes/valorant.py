@@ -8,7 +8,7 @@ from fastapi.responses import JSONResponse
 
 from models.db.valorant import MongoImagesModel, MongoRankDetailsDataModel, MongoRankDetailsModel, \
     MongoAccountResponseModel
-from models.pydantic.valorant import AccountResponseModel
+from models.pydantic.valorant import AccountResponseModel, SavedAccountResponseModel
 from utils.misc import fetch_json
 
 API_TOKEN = os.getenv('HENRIK_API_TOKEN')
@@ -51,15 +51,17 @@ async def get_rank_details(puuid: str):
         }
 
 
-@valorant.post("/rank/{puuid}", response_model=AccountResponseModel)
-async def save_rank_details(puuid: str):
+@valorant.post("/rank/{puuid}", response_model=SavedAccountResponseModel)
+async def save_rank_details(puuid: str,
+                            discord_id: int,
+                            discord_username: str):
     async with aiohttp.ClientSession() as session:
         headers_henrik = {
             'Authorization': f'{API_TOKEN}'
         }
 
         try:
-            account_url = f'{API_BASE_URL}/valorant/v1/by-puuid/account/{puuid}'
+            account_url = f'{API_BASE_URL}/valorant/v1/by-puuid/account/{puuid}/{discord_id}/{discord_username}'
             acc_details_json = await fetch_json(session, account_url, headers_henrik)
             acc_region = acc_details_json['data']['region']
             acc_name = acc_details_json['data']['name']
@@ -85,7 +87,9 @@ async def save_rank_details(puuid: str):
             name=acc_name,
             tag=acc_tag,
             region=acc_region,
-            rank_details=rank_details
+            rank_details=rank_details,
+            discord_id=discord_id,
+            discord_username=discord_username
         )
 
         # Save to database
