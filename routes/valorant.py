@@ -1,5 +1,6 @@
 import json
 import os
+import time
 from typing import List
 
 import aiohttp
@@ -148,3 +149,54 @@ async def get_leaderboard(
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Exception: {e}")
+
+
+@valorant.put("/update-all", response_model=List[SavedAccountResponseModel])
+async def update_all_accounts():
+    async with aiohttp.ClientSession() as session:
+        headers_henrik = {
+            'Authorization': f'{API_TOKEN}'
+        }
+
+        try:
+            accounts = MongoAccountResponseModel.objects()
+
+            updated_accounts = []
+            for account in accounts:
+                puuid = account.puuid
+                account_url = f'{API_BASE_URL}/valorant/v1/by-puuid/account/{puuid}'
+                rank_url = f'{API_BASE_URL}/valorant/v1/by-puuid/mmr/{account.region}/{puuid}'
+
+                try:
+                    acc_details_json = await fetch_json(session, account_url, headers_henrik)
+                    rank_details_json = await fetch_json(session, rank_url, headers_henrik)
+
+                    # Update account details
+                    account.name = acc_details_json['data']['name']
+                    account.tag = acc_details_json['data']['tag']
+                    account.region = acc_details_json['data']['region']
+
+                    # Update rank details
+                    images_data = rank_details_json['data'].pop('images')
+                    images = MongoImagesModel(**images_data)
+                    rank_details_data = MongoRankDetailsDataModel(images=images, **rank_details_json['data'])
+                    rank_details = MongoRankDetailsModel(status=rank_details_json['status'], data=rank_details_data)
+
+                    account.rank_details = rank_details
+
+                    # Save updated account to the database
+                    account.save()
+                    print(f"Succesfully updated account with PUUID: {puuid}")
+                    # Prepare response
+                    account_response_json = json.loads(account.to_json())
+                    account_response_json.pop('_id')
+                    updated_accounts.append(account_response_json)
+                    time.sleep(2.5)
+
+                except Exception as e:
+                    print(f"Failed to update account with PUUID {puuid}: {e}")
+
+            return updated_accounts
+
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=f"Exception: {e}")

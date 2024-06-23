@@ -1,3 +1,4 @@
+import asyncio
 import os
 
 from fastapi import FastAPI
@@ -10,8 +11,11 @@ from starlette.middleware.sessions import SessionMiddleware
 from db import connect_db, disconnect_db
 from routes.discord import discord_router
 from routes.valorant import valorant
+from utils.update_data import BackgroundRunner
 
 app = FastAPI()
+
+runner = BackgroundRunner()
 
 # Configure allowed origins for CORS
 allowed_origins = [
@@ -39,6 +43,11 @@ app.add_middleware(
 @app.on_event("startup")
 def on_startup():
     connect_db()
+
+
+@app.on_event('startup')
+async def app_startup():
+    asyncio.create_task(runner.run_main())
 
 
 @app.on_event("shutdown")
