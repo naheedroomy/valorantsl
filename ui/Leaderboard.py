@@ -1,4 +1,5 @@
 import streamlit as st
+
 from utils.api import fetch_leaderboard_data
 from utils.constants import DISCORD_SERVER_INVITE
 from utils.helpers import process_leaderboard_data
@@ -9,8 +10,12 @@ st.set_page_config(
     page_icon="https://i.ibb.co/dpPsHQg/valsl.jpg"
 )
 
+
 def show_leaderboard():
-    st.title("Valorant Leaderboard")
+    st.title("Sri Lanka Valorant Leaderboard")
+    st.write(
+        "To register yourself on the leaderboard, click on the 'Register' Button on the sidebar. "
+        "\nThr leaderboard is updated every 30 minutes.")
     st.markdown(f"[Join the Discord server!]({DISCORD_SERVER_INVITE})")
 
     # Custom CSS for column widths and styling
@@ -18,7 +23,7 @@ def show_leaderboard():
         """
         <style>
         .dataframe tbody tr th:only-of-type {
-            vertical-align: middle;
+            vertical-align: left;
         }
 
         .dataframe tbody tr th {
@@ -26,11 +31,11 @@ def show_leaderboard():
         }
 
         .dataframe thead th {
-            text-align: center;
+            text-align: left;
         }
 
         .dataframe td {
-            text-align: center;  /* Center-align the text of all rows by default */
+            text-align: left;  /* Center-align the text of all rows by default */
         }
 
         .dataframe td:nth-child(2) {  /* Left-align the text of the username column */
@@ -90,6 +95,7 @@ def show_leaderboard():
             st.rerun()
     else:
         st.write("No data available for this page.")
+
 
 if __name__ == "__main__":
     show_leaderboard()
