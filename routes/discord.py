@@ -45,7 +45,7 @@ async def login():
 async def callback(request: Request, code: str):
     token, refresh_token = await discord.get_access_token(code)
     # Redirect to the React app with the token in the query parameters
-    redirect_url = f"http://localhost:3000/Registration?access_token={token}&refresh_token={refresh_token}"
+    redirect_url = f"http://localhost:8501/Registration?access_token={token}&refresh_token={refresh_token}"
     return RedirectResponse(url=redirect_url)
 
 

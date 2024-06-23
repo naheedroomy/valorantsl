@@ -5,11 +5,11 @@ from typing import List
 import aiohttp
 from fastapi import APIRouter, HTTPException, Query
 from fastapi.responses import JSONResponse
+from utils.misc import fetch_json
 
 from models.db.valorant import MongoImagesModel, MongoRankDetailsDataModel, MongoRankDetailsModel, \
     MongoAccountResponseModel
 from models.pydantic.valorant import AccountResponseModel, SavedAccountResponseModel
-from utils.misc import fetch_json
 
 API_TOKEN = os.getenv('HENRIK_API_TOKEN')
 API_BASE_URL = "https://api.henrikdev.xyz"
@@ -55,6 +55,18 @@ async def get_rank_details(puuid: str):
 async def save_rank_details(puuid: str,
                             discord_id: int,
                             discord_username: str):
+    # check if the puuid is already in the database
+    if MongoAccountResponseModel.objects(puuid=puuid):
+        raise HTTPException(status_code=400, detail="Riot account already exists in the database.")
+
+    # check if the discord_id is already in the database
+    if MongoAccountResponseModel.objects(discord_id=discord_id):
+        raise HTTPException(status_code=400, detail="Discord ID already exists in the database.")
+
+    # check if the discord_username is already in the database
+    if MongoAccountResponseModel.objects(discord_username=discord_username):
+        raise HTTPException(status_code=400, detail="Discord username already exists in the database.")
+
     async with aiohttp.ClientSession() as session:
         headers_henrik = {
             'Authorization': f'{API_TOKEN}'
