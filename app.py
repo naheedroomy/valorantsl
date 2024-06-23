@@ -11,11 +11,12 @@ from starlette.middleware.sessions import SessionMiddleware
 from db import connect_db, disconnect_db
 from routes.discord import discord_router
 from routes.valorant import valorant
-from utils.update_data import BackgroundRunner
+from utils.discord_bot import bot1, bot2
+from utils.update_data import UpdateAllUsersBackgroundRunner
 
 app = FastAPI()
 
-runner = BackgroundRunner()
+update_all_users_runner = UpdateAllUsersBackgroundRunner()
 
 # Configure allowed origins for CORS
 allowed_origins = [
@@ -46,9 +47,14 @@ def on_startup():
 
 
 @app.on_event('startup')
-async def app_startup():
-    asyncio.create_task(runner.run_main())
+async def update_users_on_startup():
+    asyncio.create_task(update_all_users_runner.run_update_all_users())
 
+
+@app.on_event('startup')
+async def start_bots_on_startup():
+    asyncio.create_task(bot1.run())
+    asyncio.create_task(bot2.run())
 
 @app.on_event("shutdown")
 def on_shutdown():

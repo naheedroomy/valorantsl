@@ -6,11 +6,12 @@ from typing import List
 import aiohttp
 from fastapi import APIRouter, HTTPException, Query
 from fastapi.responses import JSONResponse
-from utils.misc import fetch_json
+
 
 from models.db.valorant import MongoImagesModel, MongoRankDetailsDataModel, MongoRankDetailsModel, \
     MongoAccountResponseModel
 from models.pydantic.valorant import AccountResponseModel, SavedAccountResponseModel
+from utils.misc import fetch_json
 
 API_TOKEN = os.getenv('HENRIK_API_TOKEN')
 API_BASE_URL = "https://api.henrikdev.xyz"
