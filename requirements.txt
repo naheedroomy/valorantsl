@@ -5,3 +5,5 @@ uvicorn
 itsdangerous
 streamlit
 mongoengine
+dnspython
+discord
