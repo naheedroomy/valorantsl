@@ -5,7 +5,7 @@ FROM python:3.10.12-slim
 WORKDIR /app
 RUN mkdir /app/log
 # Copy the requirements file into the container
-COPY requirements.txt .
+COPY requirements/backend.txt requirements.txt
 
 # Install any needed packages specified in requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
