@@ -2,6 +2,11 @@ import streamlit as st
 
 from utils.api import get_discord_user_details, check_discord_exists, get_discord_login_url, save_user_data
 
+st.set_page_config(
+    page_title="Register - SL Valorant Leaderboard",
+    page_icon="https://i.ibb.co/dpPsHQg/valsl.jpg"
+)
+
 st.title("Registration")
 st.subheader('1. Login with Discord')
 
