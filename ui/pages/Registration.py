@@ -40,7 +40,7 @@ if access_token:
                         if response.get('detail'):
                             st.error(response.get('detail'))
                         else:
-                            st.write("User successfully registered! The leaderboard will update in 30 minutes.")
+                            st.write("User registered successfully! The leaderboard will update in 30 minutes.")
                             st.write(response)
                     else:
                         st.error("Failed to save user data.")
