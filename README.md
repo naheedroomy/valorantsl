@@ -1,8 +1,10 @@
-# Valorant Sri Lanka Leaderboard
+# Valorant Sri Lanka Leaderboard (www.valorantsl.com)
 
 ## Overview
 
 This project is a comprehensive leaderboard system for Valorant players in Sri Lanka, featuring a FastAPI backend and a Streamlit frontend for ease of use. It allows users to register using their Discord accounts and Riot PUUID, and integrates with MongoDB hosted on MongoAtlas. Additionally, it includes two Discord bots that manage and update user information and roles within the Leaderboard Discord server.
+
+Entire project (apart from the database) is hosted using AWS LightSail.
 
 ## Features
 
