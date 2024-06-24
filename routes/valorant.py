@@ -61,8 +61,10 @@ async def save_rank_details(puuid: str,
         raise HTTPException(status_code=400, detail="Riot account already exists in the database.")
 
     # check if the discord_id is already in the database
-    if MongoAccountResponseModel.objects(discord_id=discord_id):
-        raise HTTPException(status_code=400, detail="Discord ID already exists in the database.")
+
+    if discord_id != 0:
+        if MongoAccountResponseModel.objects(discord_id=discord_id):
+            raise HTTPException(status_code=400, detail="Discord ID already exists in the database.")
 
     # check if the discord_username is already in the database
     if MongoAccountResponseModel.objects(discord_username=discord_username):
