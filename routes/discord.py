@@ -14,6 +14,7 @@ DISCORD_CLIENT_SECRET = os.getenv('DISCORD_CLIENT_SECRET')
 DISCORD_ENV = os.getenv('DISCORD_ENV', 'test')
 
 DISCORD_REDIRECT_URI = os.getenv('DISCORD_REDIRECT_URI', 'http://localhost:8000/discord/callback')
+CALLBACK_REDIRECT_URI = os.getenv('CALLBACK_REDIRECT_URI', 'http://localhost:8501/Registration')
 
 # Check if environment variables are set
 if not DISCORD_CLIENT_ID or not DISCORD_CLIENT_SECRET:
@@ -41,7 +42,7 @@ async def login():
 async def callback(request: Request, code: str):
     token, refresh_token = await discord.get_access_token(code)
     # Redirect to the React app with the token in the query parameters
-    redirect_url = f"http://localhost:8501/Registration?access_token={token}&refresh_token={refresh_token}"
+    redirect_url = f"{CALLBACK_REDIRECT_URI}?access_token={token}&refresh_token={refresh_token}"
     return RedirectResponse(url=redirect_url)
 
 
