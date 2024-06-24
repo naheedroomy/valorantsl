@@ -29,9 +29,8 @@ Entire project (apart from the database) is hosted using AWS LightSail.
 - `/`: Contains the FastAPI backend code.
 - `ui/`: Contains the Streamlit frontend code.
 - `utils/`: Contains the code for the Discord bots, and updating users.
-- `database/`: Configuration and scripts related to MongoDB.
+- `database/`: Configuration MongoDB.
 - `.env.example`: Example environment file for sensitive configurations.
-- `requirements.txt`: List of Python dependencies.
 
 ## Docker and Deployment
 
