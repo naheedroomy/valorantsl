@@ -34,15 +34,16 @@ if access_token:
         puuid = st.text_input("Enter your Riot PUUID:")
         if st.button("Submit"):
             if puuid:
-                response = save_user_data(puuid, user_details.get('id'), user_details.get('username'))
-                if response:
-                    if response.get('detail'):
-                        st.error(response.get('detail'))
+                with st.spinner('Checking user data...'):
+                    response = save_user_data(puuid, user_details.get('id'), user_details.get('username'))
+                    if response:
+                        if response.get('detail'):
+                            st.error(response.get('detail'))
+                        else:
+                            st.write("User successfully registered! The leaderboard will update in 30 minutes.")
+                            st.write(response)
                     else:
-                        st.write("User successfully registered! The leaderboard will update in 30 minutes.")
-                        st.write(response)
-                else:
-                    st.error("Failed to save user data.")
+                        st.error("Failed to save user data.")
             else:
                 st.error("Please enter your Riot PUUID.")
 
