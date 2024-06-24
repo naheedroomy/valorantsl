@@ -1,6 +1,6 @@
 fastapi
 pydantic
-fastapi-discord
+fastapi-discord==0.2.5
 uvicorn
 itsdangerous
 streamlit
