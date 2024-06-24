@@ -15,7 +15,7 @@ def show_leaderboard():
     st.title("Sri Lanka Valorant Leaderboard")
     st.write(
         "To register yourself on the leaderboard, click on the 'Register' Button on the sidebar. "
-        "\nThr leaderboard is updated every 30 minutes.")
+        "\nThe leaderboard is updated every 30 minutes.")
     st.markdown(f"[Join the Discord server!]({DISCORD_SERVER_INVITE})")
 
     # Custom CSS for column widths and styling
