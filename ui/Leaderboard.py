@@ -96,6 +96,18 @@ def show_leaderboard():
     else:
         st.write("No data available for this page.")
 
+    # Add GitHub link with logo at the bottom of the page
+    st.markdown(
+        """
+        <div style='text-align: center; margin-top: 50px;'>
+            <a href='https://github.com/naheedroomy/valorantsl' target='_blank'> View Source on GitHub 
+                <img src='https://upload.wikimedia.org/wikipedia/commons/9/91/Octicons-mark-github.svg' alt='GitHub logo' width='50' />
+            </a>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
 
 if __name__ == "__main__":
     show_leaderboard()
