@@ -1,4 +1,6 @@
 # Constants for the application
+import os
+
 RANK_MAPPING = {
     'Iron 1': 3, 'Iron 2': 4, 'Iron 3': 5,
     'Bronze 1': 6, 'Bronze 2': 7, 'Bronze 3': 8,
@@ -11,4 +13,4 @@ RANK_MAPPING = {
     'Radiant': 27
 }
 
-DISCORD_SERVER_INVITE = "https://discord.gg/YX8dFyWqMm"
+DISCORD_SERVER_INVITE = os.getenv("DISCORD_SERVER_INVITE")

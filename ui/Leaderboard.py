@@ -71,7 +71,7 @@ def show_leaderboard():
 
     # Pagination controls
     page = st.session_state.get('page', 1)
-    page_size = 50
+    page_size = 75
 
     # Fetch data
     leaderboard_data, total_count = fetch_leaderboard_data(page, page_size)
