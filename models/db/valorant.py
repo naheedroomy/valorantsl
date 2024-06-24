@@ -26,7 +26,7 @@ class MongoRankDetailsModel(EmbeddedDocument):
 
 
 class MongoAccountResponseModel(Document):
-    meta = {'collection': 'test_user_leaderboard'}
+    meta = {'collection': 'user_leaderboard_complete'}
     puuid = StringField(required=True, unique=True)
     name = StringField(required=True)
     tag = StringField(required=True)

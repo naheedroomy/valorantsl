@@ -33,15 +33,16 @@ intents = discord.Intents.default()
 intents.members = True
 
 # Set up connection to MongoDB
+MONGO_USERNAME = os.getenv('MONGO_USERNAME')
 MONGO_PASSWORD = os.getenv('MONGO_PASSWORD')
 MONGO_HOST = os.getenv('MONGO_HOST')
 DISCORD_BOT_TOKEN_1 = os.getenv('DISCORD_BOT_TOKEN_1')
 DISCORD_BOT_TOKEN_2 = os.getenv('DISCORD_BOT_TOKEN_2')
 
 mongo_client = pymongo.MongoClient(
-    f"mongodb+srv://naheedroomy:{MONGO_PASSWORD}@{MONGO_HOST}?retryWrites=true&w=majority")
+    f"mongodb+srv://{MONGO_USERNAME}:{MONGO_PASSWORD}@{MONGO_HOST}?retryWrites=true&w=majority")
 db = mongo_client["live"]
-collection = db["user_leaderboard"]
+collection = db["user_leaderboard_complete"]
 
 
 class DiscordBotBackgroundRunner:
