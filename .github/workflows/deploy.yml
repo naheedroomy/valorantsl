@@ -21,10 +21,10 @@ jobs:
     - name: Deploy to Server
       run: |
         ssh -o StrictHostKeyChecking=no ubuntu@15.206.154.147 << 'EOF'
-          sudo su - <<EOSU
+          sudo bash -c '
             cd /root/valorantsl
             git pull origin main
             docker compose down
             docker compose up --build -d
-          EOSU
+          '
         EOF
