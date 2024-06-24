@@ -3,7 +3,7 @@ pydantic
 fastapi-discord==0.2.5
 uvicorn
 itsdangerous
-streamlit
 mongoengine
 dnspython
 discord
+requests
