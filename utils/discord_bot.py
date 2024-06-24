@@ -61,17 +61,17 @@ class DiscordBotBackgroundRunner:
             print(f'{self.client.user} has connected to Discord!')
             self.client.loop.create_task(self.main_loop())
 
-    async def fetch_tier_data(self):
-        async with aiohttp.ClientSession() as session:
-            async with session.get('https://valorant-api.com/v1/competitivetiers') as response:
-                if response.status == 200:
-                    data = await response.json()
-                    tiers = data['data'][0]['tiers']
-                    tier_icons = {tier['tierName']: tier['smallIcon'] for tier in tiers if tier['smallIcon']}
-                    return tier_icons
-                else:
-                    logging.error(f"Failed to fetch tier data: {response.status}")
-                    return {}
+    # async def fetch_tier_data(self):
+    #     async with aiohttp.ClientSession() as session:
+    #         async with session.get('https://valorant-api.com/v1/competitivetiers') as response:
+    #             if response.status == 200:
+    #                 data = await response.json()
+    #                 tiers = data['data'][0]['tiers']
+    #                 tier_icons = {tier['tierName']: tier['smallIcon'] for tier in tiers if tier['smallIcon']}
+    #                 return tier_icons
+    #             else:
+    #                 logging.error(f"Failed to fetch tier data: {response.status}")
+    #                 return {}
 
     async def update_alpha_omega_roles(self, member, rank):
         if member is None:
@@ -99,7 +99,7 @@ class DiscordBotBackgroundRunner:
             if omega_role in member.roles:
                 await member.remove_roles(omega_role)
 
-    async def update_member_roles(self, member, tier_icons):
+    async def update_member_roles(self, member):
         if member is None:
             logging.error(f"Member object is None. Skipping role update.")
             return
@@ -210,7 +210,7 @@ class DiscordBotBackgroundRunner:
             if e.status == 503:
                 logging.error(f"[ BOT {self.bot_id} ] - Discord server error (503): {e}. Retrying...")
                 await asyncio.sleep(10)  # Wait for 10 seconds before retrying
-                await self.update_member_roles(member, tier_icons)  # Retry the function
+                await self.update_member_roles(member)  # Retry the function
             else:
                 logging.error(f"[ BOT {self.bot_id} ] - Discord server error: {e}")
 
@@ -223,7 +223,7 @@ class DiscordBotBackgroundRunner:
     async def update_all_member_roles(self):
         count = 0
         start_time = time.time()
-        tier_icons = await self.fetch_tier_data()
+        # tier_icons = await self.fetch_tier_data()
         for guild in self.client.guilds:
             members = [member for member in guild.members if not member.bot]
             members_count = len(members)
@@ -235,7 +235,7 @@ class DiscordBotBackgroundRunner:
 
             for member in members:
                 count += 1
-                await self.update_member_roles(member, tier_icons)
+                await self.update_member_roles(member)
 
         time_taken = time.time() - start_time
         logging.info(f"[ BOT {self.bot_id} ] - Time taken to update all member roles: {time_taken / 60} minutes")
