@@ -24,7 +24,7 @@ jobs:
           sudo su - <<EOSU
             cd /root/valorantsl
             git pull origin main
-            docker-compose down
-            docker-compose up --build -d
+            docker compose down
+            docker compose up --build -d
           EOSU
         EOF
