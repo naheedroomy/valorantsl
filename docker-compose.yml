@@ -9,6 +9,9 @@ services:
       - .env
     networks:
       - app-network
+    volumes:
+      - ./log:/app/log
+
   streamlit:
     build:
       context: .
@@ -18,7 +21,7 @@ services:
     env_file:
       - .env
     networks:
-        - app-network
+      - app-network
 
 networks:
-    app-network:
+  app-network:

@@ -6,7 +6,7 @@ import time
 import aiohttp
 import discord
 import pymongo
-import dns
+
 
 # logging for the bots
 class ScriptFilter(logging.Filter):
@@ -129,7 +129,8 @@ class DiscordBotBackgroundRunner:
                 if stored_discord_id == 0 or stored_discord_id is None:
                     update_query = {"discord_username": discord_username}
                     new_values = {"$set": {"discord_id": discord_id}}
-                    logging.info(f"[ BOT {self.bot_id} ] -  Updating discord_id for {discord_username} in the database.")
+                    logging.info(
+                        f"[ BOT {self.bot_id} ] -  Updating discord_id for {discord_username} in the database.")
                     collection.update_one(update_query, new_values)
 
             query = {"$or": [{"discord_id": discord_id}, {"discord_username": discord_username}]}
@@ -139,7 +140,8 @@ class DiscordBotBackgroundRunner:
                     "discord_username"] != discord_username:
                     update_query = {"discord_id": discord_id}
                     new_values = {"$set": {"discord_username": discord_username}}
-                    logging.info(f"[ BOT {self.bot_id} ] - Updating discord_username for {discord_username} in the database.")
+                    logging.info(
+                        f"[ BOT {self.bot_id} ] - Updating discord_username for {discord_username} in the database.")
                     collection.update_one(update_query, new_values)
 
                 verified_role = discord.utils.get(member.guild.roles, name="Verified")
@@ -152,7 +154,8 @@ class DiscordBotBackgroundRunner:
 
                 rank = result.get("rank")
                 if rank is None:
-                    logging.error(f"[ BOT {self.bot_id} ] - Rank not found for {discord_username}. Skipping role update.")
+                    logging.error(
+                        f"[ BOT {self.bot_id} ] - Rank not found for {discord_username}. Skipping role update.")
                     return
 
                 original_rank = rank
@@ -182,7 +185,8 @@ class DiscordBotBackgroundRunner:
                     if not current_rank_role or current_rank_role.name != rank:
                         if current_rank_role:
                             await member.remove_roles(current_rank_role)
-                            logging.info(f"[ BOT {self.bot_id} ] - Removed - {discord_username} - {current_rank_role.name}.")
+                            logging.info(
+                                f"[ BOT {self.bot_id} ] - Removed - {discord_username} - {current_rank_role.name}.")
 
                         rank_role = discord.utils.get(member.guild.roles, name=rank)
                         if rank_role:

@@ -6,12 +6,11 @@ from typing import List
 import aiohttp
 from fastapi import APIRouter, HTTPException, Query
 from fastapi.responses import JSONResponse
-
+from utils.misc import fetch_json
 
 from models.db.valorant import MongoImagesModel, MongoRankDetailsDataModel, MongoRankDetailsModel, \
     MongoAccountResponseModel
 from models.pydantic.valorant import AccountResponseModel, SavedAccountResponseModel
-from utils.misc import fetch_json
 
 API_TOKEN = os.getenv('HENRIK_API_TOKEN')
 API_BASE_URL = "https://api.henrikdev.xyz"
@@ -198,6 +197,81 @@ async def update_all_accounts():
                     print(f"Failed to update account with PUUID {puuid}: {e}")
 
             return updated_accounts
+
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=f"Exception: {e}")
+
+
+@valorant.get("/account/{puuid}", response_model=SavedAccountResponseModel)
+async def get_account(puuid: str):
+    try:
+        account = MongoAccountResponseModel.objects(puuid=puuid).first()
+        if not account:
+            raise HTTPException(status_code=404, detail="Account not found in the database.")
+
+        account_json = json.loads(account.to_json())
+        account_json.pop('_id')
+        return account_json
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Exception: {e}")
+
+
+@valorant.get("/account/all/puuids", response_model=List[str])
+async def get_all_accounts_puuid_list():
+    try:
+        accounts = MongoAccountResponseModel.objects()
+        puuid_list = [account.puuid for account in accounts]
+        return puuid_list
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Exception: {e}")
+
+
+
+@valorant.put("/update/{puuid}", response_model=SavedAccountResponseModel)
+async def update_account(puuid: str):
+    async with aiohttp.ClientSession() as session:
+        headers_henrik = {
+            'Authorization': f'{API_TOKEN}'
+        }
+
+        try:
+            account = MongoAccountResponseModel.objects(puuid=puuid).first()
+            if not account:
+                raise HTTPException(status_code=404, detail="Account not found")
+
+            account_url = f'{API_BASE_URL}/valorant/v1/by-puuid/account/{puuid}'
+            rank_url = f'{API_BASE_URL}/valorant/v1/by-puuid/mmr/{account.region}/{puuid}'
+
+            try:
+                acc_details_json = await fetch_json(session, account_url, headers_henrik)
+                rank_details_json = await fetch_json(session, rank_url, headers_henrik)
+
+                # Update account details
+                account.name = acc_details_json['data']['name']
+                account.tag = acc_details_json['data']['tag']
+                account.region = acc_details_json['data']['region']
+
+                # Update rank details
+                images_data = rank_details_json['data'].pop('images')
+                images = MongoImagesModel(**images_data)
+                rank_details_data = MongoRankDetailsDataModel(images=images, **rank_details_json['data'])
+                rank_details = MongoRankDetailsModel(status=rank_details_json['status'], data=rank_details_data)
+
+                account.rank_details = rank_details
+
+                # Save updated account to the database
+                account.save()
+
+                # Prepare response
+                account_response_json = json.loads(account.to_json())
+                account_response_json.pop('_id')
+
+                return account_response_json
+
+            except Exception as e:
+                raise HTTPException(status_code=500, detail=f"Failed to update account: {e}")
 
         except Exception as e:
             raise HTTPException(status_code=500, detail=f"Exception: {e}")
