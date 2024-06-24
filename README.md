@@ -40,7 +40,7 @@ Both the FastAPI backend and Streamlit frontend are dockerized. GitHub Actions a
 
 - Visit the website and register using your Discord account and Riot PUUID.
 - Check the leaderboard to see the top Valorant players in Sri Lanka.
-- Join the Discord server to interact with other players and see your rank reflected in your username and roles.
+- Join the Discord server to interact with other players and see your rank reflected in your username and roles. (and compete within the server)
 
 ## Credits
 
