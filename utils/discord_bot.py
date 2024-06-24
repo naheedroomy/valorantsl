@@ -41,7 +41,9 @@ DISCORD_BOT_TOKEN_2 = os.getenv('DISCORD_BOT_TOKEN_2')
 
 mongo_client = pymongo.MongoClient(
     f"mongodb+srv://{MONGO_USERNAME}:{MONGO_PASSWORD}@{MONGO_HOST}?retryWrites=true&w=majority")
+
 db = mongo_client["live"]
+
 collection = db["user_leaderboard_complete"]
 
 
@@ -53,8 +55,8 @@ class DiscordBotBackgroundRunner:
         @self.client.event
         async def on_member_join(member):
             logging.info(f"[ BOT {self.bot_id} ] - {member} has joined the server!")
-            tier_icons = await self.fetch_tier_data()
-            await self.update_member_roles(member, tier_icons)
+            # tier_icons = await self.fetch_tier_data()
+            await self.update_member_roles(member)
 
         @self.client.event
         async def on_ready():
@@ -153,7 +155,8 @@ class DiscordBotBackgroundRunner:
                     await member.remove_roles(unverified_role)
                     logging.info(f"[ BOT {self.bot_id} ] - Removed unverified role from {discord_username}.")
 
-                rank = result.get("rank")
+                rank = result.get("rank_details", {}).get("data", {}).get("currenttierpatched")
+
                 if rank is None:
                     logging.error(
                         f"[ BOT {self.bot_id} ] - Rank not found for {discord_username}. Skipping role update.")
