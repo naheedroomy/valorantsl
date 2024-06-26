@@ -105,6 +105,8 @@ class DiscordBotBackgroundRunner:
         if member is None:
             logging.error(f"Member object is None. Skipping role update.")
             return
+        else: # If member object is not None
+            logging.info(f"Processing {member}.")
 
         try:
             await asyncio.sleep(1.2)
