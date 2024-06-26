@@ -51,10 +51,10 @@ async def update_users_on_startup():
     asyncio.create_task(update_all_users_runner.run_update_all_users())
 
 
-@app.on_event('startup')
-async def start_bots_on_startup():
-    asyncio.create_task(bot1.run())
-    asyncio.create_task(bot2.run())
+# @app.on_event('startup')
+# async def start_bots_on_startup():
+#     asyncio.create_task(bot1.run())
+#     asyncio.create_task(bot2.run())
 
 @app.on_event("shutdown")
 def on_shutdown():
