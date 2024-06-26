@@ -1,9 +1,10 @@
+import os
+
 import streamlit as st
 
 from utils.api import get_discord_user_details, check_discord_exists, get_discord_login_url, save_user_data
 
-from ui.utils.constants import DISCORD_SERVER_INVITE
-
+DISCORD_SERVER_INVITE = os.getenv("DISCORD_SERVER_INVITE")
 st.set_page_config(
     page_title="Register - SL Valorant Leaderboard",
     page_icon="https://i.ibb.co/dpPsHQg/valsl.jpg"
@@ -67,7 +68,6 @@ else:
            ''', unsafe_allow_html=True)
     else:
         st.error("Failed to retrieve Discord login URL.")
-
 
 # Add GitHub link with logo at the bottom of the page
 st.markdown(
