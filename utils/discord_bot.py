@@ -235,7 +235,7 @@ class DiscordBotBackgroundRunner:
                 members = members[:members_count // 2 + members_count % 2]
             else:
                 members = members[members_count // 2 + members_count % 2:]
-
+            logging.info(f"[ Members: {len(members)} ] - {members}")
             for member in members:
                 count += 1
                 await self.update_member_roles(member)
