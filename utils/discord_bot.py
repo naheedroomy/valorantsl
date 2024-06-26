@@ -105,9 +105,6 @@ class DiscordBotBackgroundRunner:
         if member is None:
             logging.error(f"Member object is None. Skipping role update.")
             return
-        else: # If member object is not None
-            logging.info(f"Processing {member}.")
-
         try:
             await asyncio.sleep(1.2)
 
@@ -124,31 +121,31 @@ class DiscordBotBackgroundRunner:
                 return
 
             discord_username = str(member)
-            discord_id = member.id
-            logging.info(f"[ BOT {self.bot_id} ] - Processing {discord_username}, {discord_id}.")
+            logging.info(f"[ BOT {self.bot_id} ] - Processing {discord_username}")
             query = {"discord_username": discord_username}
             logging.info(f"[ BOT {self.bot_id} ] - Query: {query}")
             result = collection.find_one(query)
 
-            if result:
-                stored_discord_id = result.get("discord_id")
-                if stored_discord_id == 0 or stored_discord_id is None:
-                    update_query = {"discord_username": discord_username}
-                    new_values = {"$set": {"discord_id": discord_id}}
-                    logging.info(
-                        f"[ BOT {self.bot_id} ] -  Updating discord_id for {discord_username} in the database.")
-                    collection.update_one(update_query, new_values)
+            # if result:
+                # stored_discord_id = result.get("discord_id")
+                # if stored_discord_id == 0 or stored_discord_id is None:
+                #     update_query = {"discord_username": discord_username}
+                #     new_values = {"$set": {"discord_id": discord_id}}
+                #     logging.info(
+                #         f"[ BOT {self.bot_id} ] -  Updating discord_id for {discord_username} in the database.")
+                #     collection.update_one(update_query, new_values)
 
-            query = {"$or": [{"discord_id": discord_id}, {"discord_username": discord_username}]}
+            # query = {"$or": [{"discord_id": discord_id}, {"discord_username": discord_username}]}
+            query = {"discord_username": discord_username}
             result = collection.find_one(query)
             if result:
-                if "discord_id" in result and discord_id and discord_id != 0 and result[
-                    "discord_username"] != discord_username:
-                    update_query = {"discord_id": discord_id}
-                    new_values = {"$set": {"discord_username": discord_username}}
-                    logging.info(
-                        f"[ BOT {self.bot_id} ] - Updating discord_username for {discord_username} in the database.")
-                    collection.update_one(update_query, new_values)
+                # if "discord_id" in result and discord_id and discord_id != 0 and result[
+                #     "discord_username"] != discord_username:
+                #     update_query = {"discord_id": discord_id}
+                #     new_values = {"$set": {"discord_username": discord_username}}
+                #     logging.info(
+                #         f"[ BOT {self.bot_id} ] - Updating discord_username for {discord_username} in the database.")
+                #     collection.update_one(update_query, new_values)
 
                 verified_role = discord.utils.get(member.guild.roles, name="Verified")
                 await member.add_roles(verified_role)
