@@ -123,8 +123,9 @@ class DiscordBotBackgroundRunner:
 
             discord_username = str(member)
             discord_id = member.id
-            logging.info(f"[ BOT {self.bot_id} ] - Processing {discord_username}")
+            logging.info(f"[ BOT {self.bot_id} ] - Processing {discord_username}, {discord_id}.")
             query = {"discord_username": discord_username}
+            logging.info(f"[ BOT {self.bot_id} ] - Query: {query}")
             result = collection.find_one(query)
 
             if result:
