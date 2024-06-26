@@ -2,6 +2,8 @@ import streamlit as st
 
 from utils.api import get_discord_user_details, check_discord_exists, get_discord_login_url, save_user_data
 
+from ui.utils.constants import DISCORD_SERVER_INVITE
+
 st.set_page_config(
     page_title="Register - SL Valorant Leaderboard",
     page_icon="https://i.ibb.co/dpPsHQg/valsl.jpg"
@@ -47,6 +49,7 @@ if access_token:
                         else:
                             st.write("User registered successfully! The leaderboard will update in 30 minutes.")
                             st.write(response)
+                            st.markdown(f"[Join the Discord server!]({DISCORD_SERVER_INVITE})")
                     else:
                         st.error("Failed to save user data.")
             else:
