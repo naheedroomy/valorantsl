@@ -101,6 +101,128 @@ class DiscordBotBackgroundRunner:
             if omega_role in member.roles:
                 await member.remove_roles(omega_role)
 
+    # async def update_member_roles(self, member):
+    #     if member is None:
+    #         logging.error(f"Member object is None. Skipping role update.")
+    #         return
+    #
+    #     try:
+    #         await asyncio.sleep(1.2)
+    #
+    #         manual_role = discord.utils.get(member.guild.roles, name="Manual")
+    #         if manual_role in member.roles:
+    #             rank_roles = ['Ascendant', 'Diamond', 'Immortal', 'Radiant', 'Gold', 'Platinum', 'Silver', 'Iron',
+    #                           'Bronze',
+    #                           'Unranked']
+    #             current_rank_role = next((role for role in member.roles if role.name in rank_roles), None)
+    #
+    #             if current_rank_role:
+    #                 await self.update_alpha_omega_roles(member, current_rank_role.name)
+    #
+    #             return
+    #
+    #         discord_username = str(member)
+    #         discord_id = member.id
+    #         logging.info(f"[ BOT {self.bot_id} ] - Processing {discord_username}")
+    #         query = {"discord_username": discord_username}
+    #         result = collection.find_one(query)
+    #
+    #         if result:
+    #             stored_discord_id = result.get("discord_id")
+    #             if stored_discord_id == 0 or stored_discord_id is None:
+    #                 update_query = {"discord_username": discord_username}
+    #                 new_values = {"$set": {"discord_id": discord_id}}
+    #                 logging.info(
+    #                     f"[ BOT {self.bot_id} ] -  Updating discord_id for {discord_username} in the database.")
+    #                 collection.update_one(update_query, new_values)
+    #
+    #         query = {"$or": [{"discord_id": discord_id}, {"discord_username": discord_username}]}
+    #         result = collection.find_one(query)
+    #         if result:
+    #             if "discord_id" in result and discord_id and discord_id != 0 and result[
+    #                 "discord_username"] != discord_username:
+    #                 update_query = {"discord_id": discord_id}
+    #                 new_values = {"$set": {"discord_username": discord_username}}
+    #                 logging.info(
+    #                     f"[ BOT {self.bot_id} ] - Updating discord_username for {discord_username} in the database.")
+    #                 collection.update_one(update_query, new_values)
+    #
+    #             verified_role = discord.utils.get(member.guild.roles, name="Verified")
+    #             await member.add_roles(verified_role)
+    #
+    #             unverified_role = discord.utils.get(member.guild.roles, name="Unverified")
+    #             if unverified_role in member.roles:
+    #                 await member.remove_roles(unverified_role)
+    #                 logging.info(f"[ BOT {self.bot_id} ] - Removed unverified role from {discord_username}.")
+    #
+    #             rank = result.get("rank_details", {}).get("data", {}).get("currenttierpatched")
+    #
+    #             if rank is None:
+    #                 logging.error(
+    #                     f"[ BOT {self.bot_id} ] - Rank not found for {discord_username}. Skipping role update.")
+    #                 return
+    #
+    #             original_rank = rank
+    #             rank = rank.split()[0]
+    #
+    #             rank_dict = {'Iron': 'Irn', 'Bronze': 'Brz', 'Silver': 'Slv', 'Gold': 'Gld', 'Platinum': 'Plt',
+    #                          'Diamond': 'Dia', 'Immortal': 'Imm', 'Radiant': 'Radiant', 'Ascendant': 'Asc',
+    #                          'Unranked': 'Unranked'}
+    #
+    #             rank_short = rank_dict[rank]
+    #             new_nickname = f"{member.name}({rank_short})"
+    #             if member.nick != new_nickname:
+    #                 try:
+    #                     await member.edit(nick=new_nickname)
+    #                     logging.info(f"[ BOT {self.bot_id} ] - Updated nickname - {discord_username} - {new_nickname}.")
+    #                 except discord.errors.Forbidden:
+    #                     logging.error(
+    #                         f"[ BOT {self.bot_id} ] - Failed to update nickname for {discord_username} due to insufficient permissions.")
+    #                     return
+    #
+    #             if rank:
+    #                 rank_roles = ['Ascendant', 'Diamond', 'Immortal', 'Radiant', 'Gold', 'Platinum', 'Silver', 'Iron',
+    #                               'Bronze',
+    #                               'Unranked']
+    #                 current_rank_role = next((role for role in member.roles if role.name in rank_roles), None)
+    #
+    #                 if not current_rank_role or current_rank_role.name != rank:
+    #                     if current_rank_role:
+    #                         await member.remove_roles(current_rank_role)
+    #                         logging.info(
+    #                             f"[ BOT {self.bot_id} ] - Removed - {discord_username} - {current_rank_role.name}.")
+    #
+    #                     rank_role = discord.utils.get(member.guild.roles, name=rank)
+    #                     if rank_role:
+    #                         await member.add_roles(rank_role)
+    #                         logging.info(f"[ BOT {self.bot_id} ] - Updated - {discord_username} - {rank}.")
+    #                     else:
+    #                         logging.error(f"[ BOT {self.bot_id} ] - Role not found for rank: {rank}")
+    #
+    #                 if rank == 'Unranked':
+    #                     manual_role = discord.utils.get(member.guild.roles, name="Manual")
+    #                     if manual_role not in member.roles:
+    #                         await member.add_roles(manual_role)
+    #
+    #                 await self.update_alpha_omega_roles(member, rank)
+    #         else:
+    #             unverified_role = discord.utils.get(member.guild.roles, name="Unverified")
+    #             await member.add_roles(unverified_role)
+    #
+    #     except discord.errors.DiscordServerError as e:
+    #         if e.status == 503:
+    #             logging.error(f"[ BOT {self.bot_id} ] - Discord server error (503): {e}. Retrying...")
+    #             await asyncio.sleep(10)  # Wait for 10 seconds before retrying
+    #             await self.update_member_roles(member)  # Retry the function
+    #         else:
+    #             logging.error(f"[ BOT {self.bot_id} ] - Discord server error: {e}")
+    #
+    #     except discord.errors.NotFound as e:
+    #         logging.error(f"[ BOT {self.bot_id} ] - Member not found: {discord_username}. Skipping role update.")
+    #
+    #     except Exception as e:
+    #         logging.error(f"[ BOT {self.bot_id} ] - Unexpected error in update_member_roles: {e}")
+
     async def update_member_roles(self, member):
         if member is None:
             logging.error(f"Member object is None. Skipping role update.")
@@ -109,10 +231,11 @@ class DiscordBotBackgroundRunner:
             await asyncio.sleep(1.2)
 
             manual_role = discord.utils.get(member.guild.roles, name="Manual")
-            if manual_role in member.roles:
+            if manual_role is None:
+                logging.error(f"Manual role not found in guild: {member.guild.name}")
+            elif manual_role in member.roles:
                 rank_roles = ['Ascendant', 'Diamond', 'Immortal', 'Radiant', 'Gold', 'Platinum', 'Silver', 'Iron',
-                              'Bronze',
-                              'Unranked']
+                              'Bronze', 'Unranked']
                 current_rank_role = next((role for role in member.roles if role.name in rank_roles), None)
 
                 if current_rank_role:
@@ -124,39 +247,21 @@ class DiscordBotBackgroundRunner:
             logging.info(f"[ BOT {self.bot_id} ] - Processing {discord_username}")
             query = {"discord_username": discord_username}
             logging.info(f"[ BOT {self.bot_id} ] - Query: {query}")
-            result = collection.find_one(query)
 
-            # if result:
-                # stored_discord_id = result.get("discord_id")
-                # if stored_discord_id == 0 or stored_discord_id is None:
-                #     update_query = {"discord_username": discord_username}
-                #     new_values = {"$set": {"discord_id": discord_id}}
-                #     logging.info(
-                #         f"[ BOT {self.bot_id} ] -  Updating discord_id for {discord_username} in the database.")
-                #     collection.update_one(update_query, new_values)
-
-            # query = {"$or": [{"discord_id": discord_id}, {"discord_username": discord_username}]}
-            query = {"discord_username": discord_username}
             result = collection.find_one(query)
             if result:
-                # if "discord_id" in result and discord_id and discord_id != 0 and result[
-                #     "discord_username"] != discord_username:
-                #     update_query = {"discord_id": discord_id}
-                #     new_values = {"$set": {"discord_username": discord_username}}
-                #     logging.info(
-                #         f"[ BOT {self.bot_id} ] - Updating discord_username for {discord_username} in the database.")
-                #     collection.update_one(update_query, new_values)
-
                 verified_role = discord.utils.get(member.guild.roles, name="Verified")
-                await member.add_roles(verified_role)
+                if verified_role is None:
+                    logging.error(f"Verified role not found in guild: {member.guild.name}")
+                else:
+                    await member.add_roles(verified_role)
 
                 unverified_role = discord.utils.get(member.guild.roles, name="Unverified")
-                if unverified_role in member.roles:
+                if unverified_role and unverified_role in member.roles:
                     await member.remove_roles(unverified_role)
                     logging.info(f"[ BOT {self.bot_id} ] - Removed unverified role from {discord_username}.")
 
                 rank = result.get("rank_details", {}).get("data", {}).get("currenttierpatched")
-
                 if rank is None:
                     logging.error(
                         f"[ BOT {self.bot_id} ] - Rank not found for {discord_username}. Skipping role update.")
@@ -169,7 +274,7 @@ class DiscordBotBackgroundRunner:
                              'Diamond': 'Dia', 'Immortal': 'Imm', 'Radiant': 'Radiant', 'Ascendant': 'Asc',
                              'Unranked': 'Unranked'}
 
-                rank_short = rank_dict[rank]
+                rank_short = rank_dict.get(rank, rank)
                 new_nickname = f"{member.name}({rank_short})"
                 if member.nick != new_nickname:
                     try:
@@ -182,8 +287,7 @@ class DiscordBotBackgroundRunner:
 
                 if rank:
                     rank_roles = ['Ascendant', 'Diamond', 'Immortal', 'Radiant', 'Gold', 'Platinum', 'Silver', 'Iron',
-                                  'Bronze',
-                                  'Unranked']
+                                  'Bronze', 'Unranked']
                     current_rank_role = next((role for role in member.roles if role.name in rank_roles), None)
 
                     if not current_rank_role or current_rank_role.name != rank:
@@ -201,13 +305,14 @@ class DiscordBotBackgroundRunner:
 
                     if rank == 'Unranked':
                         manual_role = discord.utils.get(member.guild.roles, name="Manual")
-                        if manual_role not in member.roles:
+                        if manual_role and manual_role not in member.roles:
                             await member.add_roles(manual_role)
 
                     await self.update_alpha_omega_roles(member, rank)
             else:
                 unverified_role = discord.utils.get(member.guild.roles, name="Unverified")
-                await member.add_roles(unverified_role)
+                if unverified_role:
+                    await member.add_roles(unverified_role)
 
         except discord.errors.DiscordServerError as e:
             if e.status == 503:
@@ -235,7 +340,7 @@ class DiscordBotBackgroundRunner:
                 members = members[:members_count // 2 + members_count % 2]
             else:
                 members = members[members_count // 2 + members_count % 2:]
-            logging.info(f"[ Members: {len(members)} ] - {members}")
+
             for member in members:
                 count += 1
                 await self.update_member_roles(member)
