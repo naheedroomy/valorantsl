@@ -26,8 +26,8 @@ jobs:
             git pull origin main
             docker compose down
             docker compose up --build -d
-            docker stop valorantsl-streamlit
+            docker stop valorantsl-streamlit-1
             sleep 10
-            docker start valorantsl-streamlit
+            docker start valorantsl-streamlit-1
           '
         EOF
