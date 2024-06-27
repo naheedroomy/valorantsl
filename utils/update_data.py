@@ -45,7 +45,7 @@ class UpdateAllUsersBackgroundRunner:
 
     async def update_account(self, session, puuid):
         try:
-            async with session.put(f'{VALORANTSL_API_URL}/valorant/update/{puuid}') as response:
+            async with session.put(f'{VALORANTSL_API_URL}/valorant/update/rank/{puuid}') as response:
                 if response.status == 200:
                     logging.info(f"Successfully updated account: {puuid}")
                     return await response.json()

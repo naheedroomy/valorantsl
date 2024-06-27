@@ -250,8 +250,8 @@ async def get_all_accounts_puuid_list():
         raise HTTPException(status_code=500, detail=f"Exception: {e}")
 
 
-@valorant.put("/update/{puuid}", response_model=SavedAccountResponseModel)
-async def update_account(puuid: str):
+@valorant.put("/update/rank/{puuid}", response_model=SavedAccountResponseModel)
+async def update_account_rank(puuid: str):
     async with aiohttp.ClientSession() as session:
         headers_henrik = {
             'Authorization': f'{API_TOKEN}'
@@ -296,3 +296,22 @@ async def update_account(puuid: str):
 
         except Exception as e:
             raise HTTPException(status_code=500, detail=f"Exception: {e}")
+
+
+@valorant.put("/update/discord/{discord_id_old}/{discord_id_new}/{discord_username_new}",
+              response_model=SavedAccountResponseModel)
+async def update_account_discord(discord_id_new: int,
+                                 discord_username_new: str,
+                                 discord_id_old: int):
+    account = MongoAccountResponseModel.objects(discord_id=discord_id_old).first()
+    if not account:
+        raise HTTPException(status_code=404, detail="Account not found in the database.")
+    try:
+        account.discord_id = discord_id_new
+        account.discord_username = discord_username_new
+        account.save()
+        account_json = json.loads(account.to_json())
+        account_json.pop('_id')
+        return account_json
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Exception: {e}")
