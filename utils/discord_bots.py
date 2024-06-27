@@ -70,31 +70,10 @@ class DiscordBotBackgroundRunner:
                     self.logger.info(f'New member joined: {member.name} (ID: {member.id})')
                     await bot1.update_discord_roles(member, db_response, self.logger)
 
-            @self.client.event
-            async def on_ready():
-                self.logger.info(f'{self.client.user} has connected to Discord!')
-                guild = discord.utils.get(self.client.guilds, id=DISCORD_GUILD_ID)
-                if guild:
-                    db_response = await self.get_info_from_db(self.logger)
-
-                    members = sorted(guild.members, key=lambda member: member.id)
-
-                    for member in members:
-                        await self.update_database_discord_data(member, db_response, self.logger)
-                        await asyncio.sleep(1)
-        else:
-            @self.client.event
-            async def on_ready():
-                self.logger.info(f'{self.client.user} has connected to Discord!')
-                guild = discord.utils.get(self.client.guilds, id=DISCORD_GUILD_ID)
-                if guild:
-                    db_response = await self.get_info_from_db(self.logger)
-
-                    members = sorted(guild.members, key=lambda member: member.id)
-
-                    for member in members:
-                        await self.update_discord_roles(member, db_response, self.logger)
-                        await asyncio.sleep(1)
+        @self.client.event
+        async def on_ready():
+            self.logger.info(f'{self.client.user} has connected to Discord!')
+            await self.main_loop()
 
     async def get_info_from_db(self, logger):
         async with aiohttp.ClientSession() as session:
@@ -209,13 +188,22 @@ class DiscordBotBackgroundRunner:
                 if guild:
                     db_response = await self.get_info_from_db(self.logger)
                     members = sorted(guild.members, key=lambda member: member.id)
+                    half_members = len(members) // 2
 
-                    for member in members:
-                        if self.bot_id == 1:
-                            await self.update_database_discord_data(member, db_response, self.logger)
-                        else:
-                            await self.update_discord_roles(member, db_response, self.logger)
+                    if self.bot_id == 1:
+                        target_members = members[:half_members]  # First half
+                    else:
+                        target_members = members[half_members:]  # Second half
+
+                    for member in target_members:
+                        await self.update_discord_roles(member, db_response, self.logger)
                         await asyncio.sleep(0.5)
+
+                    # Bot 1 still updates the database for all members
+                    if self.bot_id == 1:
+                        for member in members:
+                            await self.update_database_discord_data(member, db_response, self.logger)
+                            await asyncio.sleep(0.5)
 
             except Exception as e:
                 self.logger.error(f"Error in main loop: {e}")
