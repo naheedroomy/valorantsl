@@ -12,7 +12,7 @@ intents.members = True
 DISCORD_BOT_TOKEN_1 = os.getenv('DISCORD_BOT_TOKEN_1')
 DISCORD_BOT_TOKEN_2 = os.getenv('DISCORD_BOT_TOKEN_2')
 DISCORD_GUILD_ID = int(os.getenv('DISCORD_GUILD_ID'))
-VALORANTSL_API_URL = os.getenv('VALORANTSL_API_URL_LIVE')
+VALORANTSL_API_URL = os.getenv('VALORANTSL_API_URL')
 
 
 class ScriptFilter(logging.Filter):
