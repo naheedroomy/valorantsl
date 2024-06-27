@@ -153,6 +153,26 @@ async def get_leaderboard(
         raise HTTPException(status_code=500, detail=f"Exception: {e}")
 
 
+@valorant.get("/leaderboard/all", response_model=List[SavedAccountResponseModel])
+async def get_all_leaderboard():
+    try:
+        leaderboard = MongoAccountResponseModel.objects(
+            rank_details__data__elo__ne=0,
+            rank_details__data__elo__exists=True
+        ).order_by('-rank_details.data.elo')
+
+        response = []
+        for account in leaderboard:
+            item = json.loads(account.to_json())
+            item.pop('_id')
+            response.append(item)
+
+        return response
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Exception: {e}")
+
+
 @valorant.put("/update-all", response_model=List[SavedAccountResponseModel])
 async def update_all_accounts():
     async with aiohttp.ClientSession() as session:
@@ -228,7 +248,6 @@ async def get_all_accounts_puuid_list():
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Exception: {e}")
-
 
 
 @valorant.put("/update/{puuid}", response_model=SavedAccountResponseModel)
