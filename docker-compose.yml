@@ -22,6 +22,7 @@ services:
       - .env
     networks:
       - app-network
+    command: sh -c "sleep 15 && streamlit run ui/Leaderboard.py --server.port=8501"  # Add delay and start command
 
 networks:
   app-network:
