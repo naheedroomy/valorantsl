@@ -215,7 +215,7 @@ class DiscordBotBackgroundRunner:
                             await self.update_database_discord_data(member, db_response, self.logger)
                         else:
                             await self.update_discord_roles(member, db_response, self.logger)
-                        await asyncio.sleep(1)
+                        await asyncio.sleep(0.5)
 
             except Exception as e:
                 self.logger.error(f"Error in main loop: {e}")
