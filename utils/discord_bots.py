@@ -179,6 +179,7 @@ class DiscordBotBackgroundRunner:
             unverified_role = discord.utils.get(member.guild.roles, name="Unverified")
             new_roles = [unverified_role]
             await self.update_roles(member, new_roles, logger)
+            await self.update_nickname(member, global_name, "Unverified", logger)
 
     async def main_loop(self):
         await self.client.wait_until_ready()  # Wait until the client is ready
