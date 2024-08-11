@@ -9,7 +9,7 @@ Entire project (apart from the database) is hosted using AWS LightSail.
 ## Features
 
 - **User Registration**: Users can register on the website using their Discord accounts via OAuth2 and their Riot PUUID.
-- **Leaderboard**: Displays a real-time leaderboard of Valorant players in Sri Lanka.
+- **Leaderboard**: Displays a real-time leaderboard of players in Sri Lanka.
 - **Discord Bots**: 
   - Tracks members of the Leaderboard Discord server.
   - Updates usernames in the server based on ranks.
