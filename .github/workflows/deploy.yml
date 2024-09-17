@@ -21,7 +21,7 @@ jobs:
 
     - name: Deploy to Server
       run: |
-        ssh -o StrictHostKeyChecking=no ubuntu@15.206.154.147 << 'EOF'
+        ssh -o StrictHostKeyChecking=no ubuntu@18.140.162.144 << 'EOF'
           sudo bash -c '
             cd /root/valorantsl
             git pull origin main
