@@ -1,7 +1,12 @@
 FROM nginx:latest
 
-# Copy the nginx.conf file from the nginx subdirectory
-COPY nginx/nginx.conf /etc/nginx/nginx.conf
+# Install envsubst
+RUN apt-get update && apt-get install -y gettext-base && rm -rf /var/lib/apt/lists/*
 
-# Make the default port available
+# Copy the template configuration file
+COPY nginx.conf /etc/nginx/nginx.conf.template
+
+# Use envsubst to generate the final configuration file
+CMD envsubst '$SERVER_IP' < /etc/nginx/nginx.conf.template > /etc/nginx/nginx.conf && nginx -g 'daemon off;'
+
 EXPOSE 80
