@@ -14,8 +14,8 @@ services:
 
   streamlit:
     build:
-      context: ui
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: ui/Dockerfile
     ports:
       - "8501:8501"
     env_file:
@@ -25,8 +25,8 @@ services:
 
   nginx:
     build:
-      context: nginx
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: nginx/Dockerfile
     ports:
       - "80:80"
     env_file:
