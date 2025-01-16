@@ -12,4 +12,4 @@ RUN pip install -r requirements.txt
 COPY . .
 
 # Set the command to run the Streamlit app
-CMD ["streamlit", "run", "ui/Leaderboard.py", "--server.port=8501"]
+CMD ["streamlit", "run", "ui/Leaderboard.py", "--server.port=8501", "--theme.base=dark", "--global.developmentMode=false"]
