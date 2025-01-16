@@ -28,8 +28,8 @@ services:
       context: nginx
       dockerfile: Dockerfile
     ports:
-    - "80:80"
+      - "80:80"
     env_file:
-    - .env
+      - .env
     networks:
-    - app-network
+      - app-network
