@@ -33,3 +33,6 @@ services:
       - .env
     networks:
       - app-network
+
+networks:
+  app-network: {}
