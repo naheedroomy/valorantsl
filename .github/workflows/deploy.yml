@@ -20,8 +20,10 @@ jobs:
     - name: Deploy to Server
       env:
         SSH_PASSWORD: ${{ secrets.SSH_PASSWORD }}
+        SSH_USER: ${{ secrets.SSH_USER }}
+        SSH_HOST: ${{ secrets.SSH_HOST }}
       run: |
-        sshpass -p "$SSH_PASSWORD" ssh -o StrictHostKeyChecking=no ubuntu@18.140.162.144 << 'EOF'
+        sshpass -p "$SSH_PASSWORD" ssh -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST << 'EOF'
           sudo bash -c '
             cd /root/valorantsl
             git pull origin main
