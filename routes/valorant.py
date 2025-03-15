@@ -196,7 +196,7 @@ async def update_all_accounts():
                     # Update account details
                     account.name = acc_details_json['data']['name']
                     account.tag = acc_details_json['data']['tag']
-                    account.region = acc_details_json['data']['region']
+                    # account.region = acc_details_json['data']['region']
 
                     # Update rank details
                     images_data = rank_details_json['data'].pop('images')
@@ -272,7 +272,7 @@ async def update_account_rank(puuid: str):
                 # Update account details
                 account.name = acc_details_json['data']['name']
                 account.tag = acc_details_json['data']['tag']
-                account.region = acc_details_json['data']['region']
+                # account.region = acc_details_json['data']['region']
 
                 # Update rank details
                 images_data = rank_details_json['data'].pop('images')
