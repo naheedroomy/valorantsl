@@ -38,7 +38,7 @@ async def get_rank_details(puuid: str):
             raise HTTPException(status_code=500, detail=f"Exception: {e}")
 
         try:
-            rank_url = f'{API_BASE_URL}/valorant/v1/by-puuid/mmr/{acc_region}/{puuid}'
+            rank_url = f'{API_BASE_URL}/valorant/v3/by-puuid/mmr/{acc_region}/pc/{puuid}'
             rank_details_json = await fetch_json(session, rank_url, headers_henrik)
         except Exception as e:
             raise HTTPException(status_code=500, detail=f"Exception: {e}")
