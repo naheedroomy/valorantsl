@@ -44,17 +44,23 @@ class UpdateAllUsersBackgroundRunner:
             return None
 
     async def update_account(self, session, puuid):
-        try:
-            async with session.put(f'{VALORANTSL_API_URL}/valorant/update/rank/{puuid}') as response:
-                if response.status == 200:
-                    logging.info(f"Successfully updated account: {puuid}")
-                    return await response.json()
-                else:
-                    logging.error(f"Failed to update account {puuid}: HTTP {response.status}")
-                    return None
-        except Exception as e:
-            logging.error(f"Exception occurred while updating account {puuid}: {e}")
-            return None
+        max_retries = 3
+        for attempt in range(1, max_retries + 1):
+            try:
+                async with session.put(f'{VALORANTSL_API_URL}/valorant/update/rank/{puuid}') as response:
+                    if response.status == 200:
+                        logging.info(f"Successfully updated account: {puuid}")
+                        return await response.json()
+                    else:
+                        logging.error(f"Attempt {attempt} - Failed to update account {puuid}: HTTP {response.status}")
+            except Exception as e:
+                logging.error(f"Attempt {attempt} - Exception while updating account {puuid}: {e}")
+
+            if attempt < max_retries:
+                await asyncio.sleep(2)  # Wait for 2 seconds before retrying
+
+        # After max retries, return None or handle as needed
+        return None
 
     async def update_all_users(self):
         async with aiohttp.ClientSession() as session:
