@@ -127,18 +127,23 @@ async def get_leaderboard(
         page_size: int = Query(10, ge=1, le=100)
 ):
     try:
-        # Calculate the number of items to skip
+        # Calculate pagination offset
         skip = (page - 1) * page_size
 
-        # Query the database with sorting and pagination
+        # Calculate the cutoff datetime (45 days ago)
+        cutoff_date = datetime.utcnow() - timedelta(days=45)
+
+        # Query the database with sorting, pagination, and filtering for accounts updated within 45 days
         total_count = MongoAccountResponseModel.objects(
             rank_details__data__elo__ne=0,
-            rank_details__data__elo__exists=True
+            rank_details__data__elo__exists=True,
+            rank_details__data__last_elo_change_timestamp__gte=cutoff_date
         ).count()
 
         leaderboard = MongoAccountResponseModel.objects(
             rank_details__data__elo__ne=0,
-            rank_details__data__elo__exists=True
+            rank_details__data__elo__exists=True,
+            rank_details__data__last_elo_change_timestamp__gte=cutoff_date
         ).order_by('-rank_details.data.elo').skip(skip).limit(page_size)
 
         response = []
@@ -151,6 +156,7 @@ async def get_leaderboard(
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Exception: {e}")
+
 
 
 @valorant.get("/leaderboard/all", response_model=List[SavedAccountResponseModel])
@@ -173,14 +179,13 @@ async def get_all_leaderboard():
         raise HTTPException(status_code=500, detail=f"Exception: {e}")
 
 
-from datetime import datetime
+
+from datetime import datetime, timedelta
 
 @valorant.put("/update-all", response_model=List[SavedAccountResponseModel])
 async def update_all_accounts():
     async with aiohttp.ClientSession() as session:
-        headers_henrik = {
-            'Authorization': f'{API_TOKEN}'
-        }
+        headers_henrik = {'Authorization': f'{API_TOKEN}'}
 
         try:
             accounts = MongoAccountResponseModel.objects()
@@ -190,48 +195,45 @@ async def update_all_accounts():
                 puuid = account.puuid
                 account_url = f'{API_BASE_URL}/valorant/v1/by-puuid/account/{puuid}'
                 rank_url = f'{API_BASE_URL}/valorant/v1/by-puuid/mmr/{account.region}/{puuid}'
+                mmr_history_url = f'{API_BASE_URL}/valorant/v1/by-puuid/mmr-history/{account.region}/{puuid}'
 
                 try:
                     acc_details_json = await fetch_json(session, account_url, headers_henrik)
                     rank_details_json = await fetch_json(session, rank_url, headers_henrik)
+                    mmr_history_json = await fetch_json(session, mmr_history_url, headers_henrik)
 
                     # Update account details
                     account.name = acc_details_json['data']['name']
                     account.tag = acc_details_json['data']['tag']
-                    # account.region remains unchanged
 
-                    # Process rank details:
+                    # Process rank details from the mmr endpoint
                     data = rank_details_json['data']
                     images_data = data.pop('images')
                     images = MongoImagesModel(**images_data)
-                    new_elo = data['elo']
-                    current_time = datetime.utcnow()
 
-                    if account.rank_details and account.rank_details.data and new_elo == account.rank_details.data.elo:
-                        # Elo unchanged: update elapsed time since last change
-                        last_changed_time = account.rank_details.data.last_elo_change_timestamp
-                        duration = int((current_time - last_changed_time).total_seconds())
+                    # Use the mmr-history endpoint to set the last elo change timestamp:
+                    if mmr_history_json.get('data') and len(mmr_history_json['data']) > 0:
+                        first_item = mmr_history_json['data'][0]
+                        date_raw = first_item.get('date_raw')
+                        if date_raw is not None:
+                            last_change_dt = datetime.utcfromtimestamp(date_raw)
+                        else:
+                            last_change_dt = datetime.utcnow()
                     else:
-                        # Elo changed or no previous record: reset elapsed time and update timestamp
-                        duration = 0
-                        last_changed_time = current_time
+                        last_change_dt = datetime.utcnow()
 
-                    data['elo_last_changed_time'] = duration
-                    data['last_elo_change_timestamp'] = last_changed_time
+                    data['last_elo_change_timestamp'] = last_change_dt
 
                     rank_details_data = MongoRankDetailsDataModel(images=images, **data)
                     rank_details = MongoRankDetailsModel(status=rank_details_json['status'], data=rank_details_data)
                     account.rank_details = rank_details
 
-                    # Save updated account to the database
                     account.save()
-                    print(f"Succesfully updated account with PUUID: {puuid}")
+                    print(f"Successfully updated account with PUUID: {puuid}")
 
-                    # Prepare response
                     account_response_json = json.loads(account.to_json())
                     account_response_json.pop('_id')
                     updated_accounts.append(account_response_json)
-
                     time.sleep(2.5)
                 except Exception as e:
                     print(f"Failed to update account with PUUID {puuid}: {e}")
@@ -245,9 +247,7 @@ async def update_all_accounts():
 @valorant.put("/update/rank/{puuid}", response_model=SavedAccountResponseModel)
 async def update_account_rank(puuid: str):
     async with aiohttp.ClientSession() as session:
-        headers_henrik = {
-            'Authorization': f'{API_TOKEN}'
-        }
+        headers_henrik = {'Authorization': f'{API_TOKEN}'}
 
         try:
             account = MongoAccountResponseModel.objects(puuid=puuid).first()
@@ -256,41 +256,40 @@ async def update_account_rank(puuid: str):
 
             account_url = f'{API_BASE_URL}/valorant/v1/by-puuid/account/{puuid}'
             rank_url = f'{API_BASE_URL}/valorant/v1/by-puuid/mmr/{account.region}/{puuid}'
+            mmr_history_url = f'{API_BASE_URL}/valorant/v1/by-puuid/mmr-history/{account.region}/{puuid}'
 
             try:
                 acc_details_json = await fetch_json(session, account_url, headers_henrik)
                 rank_details_json = await fetch_json(session, rank_url, headers_henrik)
+                mmr_history_json = await fetch_json(session, mmr_history_url, headers_henrik)
 
                 # Update account details
                 account.name = acc_details_json['data']['name']
                 account.tag = acc_details_json['data']['tag']
-                # account.region remains unchanged
 
-                # Process rank details:
                 data = rank_details_json['data']
                 images_data = data.pop('images')
                 images = MongoImagesModel(**images_data)
-                new_elo = data['elo']
-                current_time = datetime.utcnow()
 
-                if account.rank_details and account.rank_details.data and new_elo == account.rank_details.data.elo:
-                    last_changed_time = account.rank_details.data.last_elo_change_timestamp
-                    duration = int((current_time - last_changed_time).total_seconds())
+                # Set the last elo change timestamp using the mmr-history endpoint:
+                if mmr_history_json.get('data') and len(mmr_history_json['data']) > 0:
+                    first_item = mmr_history_json['data'][0]
+                    date_raw = first_item.get('date_raw')
+                    if date_raw is not None:
+                        last_change_dt = datetime.utcfromtimestamp(date_raw)
+                    else:
+                        last_change_dt = datetime.utcnow()
                 else:
-                    duration = 0
-                    last_changed_time = current_time
+                    last_change_dt = datetime.utcnow()
 
-                data['elo_last_changed_time'] = duration
-                data['last_elo_change_timestamp'] = last_changed_time
+                data['last_elo_change_timestamp'] = last_change_dt
 
                 rank_details_data = MongoRankDetailsDataModel(images=images, **data)
                 rank_details = MongoRankDetailsModel(status=rank_details_json['status'], data=rank_details_data)
                 account.rank_details = rank_details
 
-                # Save updated account to the database
                 account.save()
 
-                # Prepare response
                 account_response_json = json.loads(account.to_json())
                 account_response_json.pop('_id')
                 return account_response_json
