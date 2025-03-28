@@ -1,3 +1,5 @@
+from typing import Optional
+
 from pydantic import BaseModel
 
 
@@ -18,7 +20,7 @@ class RankDetailsDataModel(BaseModel):
     name: str
     tag: str
     old: bool
-
+    elo_last_changed_time: Optional[int] = 0
 
 class RankDetailsModel(BaseModel):
     status: int

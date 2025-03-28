@@ -1,4 +1,6 @@
-from mongoengine import Document, StringField, IntField, EmbeddedDocument, EmbeddedDocumentField, URLField, BooleanField
+from datetime import datetime
+
+from mongoengine import Document, StringField, IntField, EmbeddedDocument, EmbeddedDocumentField, URLField, BooleanField, DateTimeField
 
 
 class MongoImagesModel(EmbeddedDocument):
@@ -18,6 +20,9 @@ class MongoRankDetailsDataModel(EmbeddedDocument):
     name = StringField()
     tag = StringField()
     old = BooleanField()
+    # New fields:
+    elo_last_changed_time = IntField(default=0)  # stores elapsed time (in seconds, for example)
+    last_elo_change_timestamp = DateTimeField(default=datetime.utcnow)
 
 
 class MongoRankDetailsModel(EmbeddedDocument):

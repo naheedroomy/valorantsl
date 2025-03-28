@@ -173,6 +173,8 @@ async def get_all_leaderboard():
         raise HTTPException(status_code=500, detail=f"Exception: {e}")
 
 
+from datetime import datetime
+
 @valorant.put("/update-all", response_model=List[SavedAccountResponseModel])
 async def update_all_accounts():
     async with aiohttp.ClientSession() as session:
@@ -182,8 +184,8 @@ async def update_all_accounts():
 
         try:
             accounts = MongoAccountResponseModel.objects()
-
             updated_accounts = []
+
             for account in accounts:
                 puuid = account.puuid
                 account_url = f'{API_BASE_URL}/valorant/v1/by-puuid/account/{puuid}'
@@ -196,25 +198,41 @@ async def update_all_accounts():
                     # Update account details
                     account.name = acc_details_json['data']['name']
                     account.tag = acc_details_json['data']['tag']
-                    # account.region = acc_details_json['data']['region']
+                    # account.region remains unchanged
 
-                    # Update rank details
-                    images_data = rank_details_json['data'].pop('images')
+                    # Process rank details:
+                    data = rank_details_json['data']
+                    images_data = data.pop('images')
                     images = MongoImagesModel(**images_data)
-                    rank_details_data = MongoRankDetailsDataModel(images=images, **rank_details_json['data'])
-                    rank_details = MongoRankDetailsModel(status=rank_details_json['status'], data=rank_details_data)
+                    new_elo = data['elo']
+                    current_time = datetime.utcnow()
 
+                    if account.rank_details and account.rank_details.data and new_elo == account.rank_details.data.elo:
+                        # Elo unchanged: update elapsed time since last change
+                        last_changed_time = account.rank_details.data.last_elo_change_timestamp
+                        duration = int((current_time - last_changed_time).total_seconds())
+                    else:
+                        # Elo changed or no previous record: reset elapsed time and update timestamp
+                        duration = 0
+                        last_changed_time = current_time
+
+                    data['elo_last_changed_time'] = duration
+                    data['last_elo_change_timestamp'] = last_changed_time
+
+                    rank_details_data = MongoRankDetailsDataModel(images=images, **data)
+                    rank_details = MongoRankDetailsModel(status=rank_details_json['status'], data=rank_details_data)
                     account.rank_details = rank_details
 
                     # Save updated account to the database
                     account.save()
                     print(f"Succesfully updated account with PUUID: {puuid}")
+
                     # Prepare response
                     account_response_json = json.loads(account.to_json())
                     account_response_json.pop('_id')
                     updated_accounts.append(account_response_json)
-                    time.sleep(2.5)
 
+                    time.sleep(2.5)
                 except Exception as e:
                     print(f"Failed to update account with PUUID {puuid}: {e}")
 
@@ -223,6 +241,65 @@ async def update_all_accounts():
         except Exception as e:
             raise HTTPException(status_code=500, detail=f"Exception: {e}")
 
+
+@valorant.put("/update/rank/{puuid}", response_model=SavedAccountResponseModel)
+async def update_account_rank(puuid: str):
+    async with aiohttp.ClientSession() as session:
+        headers_henrik = {
+            'Authorization': f'{API_TOKEN}'
+        }
+
+        try:
+            account = MongoAccountResponseModel.objects(puuid=puuid).first()
+            if not account:
+                raise HTTPException(status_code=404, detail="Account not found")
+
+            account_url = f'{API_BASE_URL}/valorant/v1/by-puuid/account/{puuid}'
+            rank_url = f'{API_BASE_URL}/valorant/v1/by-puuid/mmr/{account.region}/{puuid}'
+
+            try:
+                acc_details_json = await fetch_json(session, account_url, headers_henrik)
+                rank_details_json = await fetch_json(session, rank_url, headers_henrik)
+
+                # Update account details
+                account.name = acc_details_json['data']['name']
+                account.tag = acc_details_json['data']['tag']
+                # account.region remains unchanged
+
+                # Process rank details:
+                data = rank_details_json['data']
+                images_data = data.pop('images')
+                images = MongoImagesModel(**images_data)
+                new_elo = data['elo']
+                current_time = datetime.utcnow()
+
+                if account.rank_details and account.rank_details.data and new_elo == account.rank_details.data.elo:
+                    last_changed_time = account.rank_details.data.last_elo_change_timestamp
+                    duration = int((current_time - last_changed_time).total_seconds())
+                else:
+                    duration = 0
+                    last_changed_time = current_time
+
+                data['elo_last_changed_time'] = duration
+                data['last_elo_change_timestamp'] = last_changed_time
+
+                rank_details_data = MongoRankDetailsDataModel(images=images, **data)
+                rank_details = MongoRankDetailsModel(status=rank_details_json['status'], data=rank_details_data)
+                account.rank_details = rank_details
+
+                # Save updated account to the database
+                account.save()
+
+                # Prepare response
+                account_response_json = json.loads(account.to_json())
+                account_response_json.pop('_id')
+                return account_response_json
+
+            except Exception as e:
+                raise HTTPException(status_code=500, detail=f"Failed to update account: {e}")
+
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=f"Exception: {e}")
 
 @valorant.get("/account/{puuid}", response_model=SavedAccountResponseModel)
 async def get_account(puuid: str):
@@ -250,52 +327,7 @@ async def get_all_accounts_puuid_list():
         raise HTTPException(status_code=500, detail=f"Exception: {e}")
 
 
-@valorant.put("/update/rank/{puuid}", response_model=SavedAccountResponseModel)
-async def update_account_rank(puuid: str):
-    async with aiohttp.ClientSession() as session:
-        headers_henrik = {
-            'Authorization': f'{API_TOKEN}'
-        }
 
-        try:
-            account = MongoAccountResponseModel.objects(puuid=puuid).first()
-            if not account:
-                raise HTTPException(status_code=404, detail="Account not found")
-
-            account_url = f'{API_BASE_URL}/valorant/v1/by-puuid/account/{puuid}'
-            rank_url = f'{API_BASE_URL}/valorant/v1/by-puuid/mmr/{account.region}/{puuid}'
-
-            try:
-                acc_details_json = await fetch_json(session, account_url, headers_henrik)
-                rank_details_json = await fetch_json(session, rank_url, headers_henrik)
-
-                # Update account details
-                account.name = acc_details_json['data']['name']
-                account.tag = acc_details_json['data']['tag']
-                # account.region = acc_details_json['data']['region']
-
-                # Update rank details
-                images_data = rank_details_json['data'].pop('images')
-                images = MongoImagesModel(**images_data)
-                rank_details_data = MongoRankDetailsDataModel(images=images, **rank_details_json['data'])
-                rank_details = MongoRankDetailsModel(status=rank_details_json['status'], data=rank_details_data)
-
-                account.rank_details = rank_details
-
-                # Save updated account to the database
-                account.save()
-
-                # Prepare response
-                account_response_json = json.loads(account.to_json())
-                account_response_json.pop('_id')
-
-                return account_response_json
-
-            except Exception as e:
-                raise HTTPException(status_code=500, detail=f"Failed to update account: {e}")
-
-        except Exception as e:
-            raise HTTPException(status_code=500, detail=f"Exception: {e}")
 
 
 @valorant.put("/update/discord/{discord_id_old}/{discord_id_new}/{discord_username_new}",
