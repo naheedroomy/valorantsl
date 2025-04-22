@@ -3,7 +3,7 @@ FROM python:3.10.12-slim
 WORKDIR /app
 
 # Copy the requirements.txt file to the /app directory in the container
-COPY ../requirements/ui.txt requirements.txt
+COPY requirements.txt requirements.txt
 
 # Install the dependencies from requirements.txt
 RUN pip install -r requirements.txt
