@@ -7,10 +7,10 @@ import aiohttp
 from fastapi import APIRouter, HTTPException, Query
 from fastapi.responses import JSONResponse
 
-from backend.app.models.db.valorant import MongoImagesModel, MongoRankDetailsDataModel, MongoRankDetailsModel, \
+from app.models.db.valorant import MongoImagesModel, MongoRankDetailsDataModel, MongoRankDetailsModel, \
     MongoAccountResponseModel
-from backend.app.models.pydantic.valorant import AccountResponseModel, SavedAccountResponseModel
-from backend.app.services.utilities import fetch_json
+from app.models.pydantic.valorant import AccountResponseModel, SavedAccountResponseModel
+from app.services.utilities import fetch_json
 
 API_TOKEN = os.getenv('HENRIK_API_TOKEN')
 API_BASE_URL = "https://api.henrikdev.xyz"

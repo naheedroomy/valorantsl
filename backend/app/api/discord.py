@@ -6,7 +6,7 @@ from fastapi.responses import JSONResponse
 from fastapi.responses import RedirectResponse
 from fastapi_discord import DiscordOAuthClient, User
 
-from backend.app.models.db.valorant import MongoAccountResponseModel
+from app.models.db.valorant import MongoAccountResponseModel
 
 # Load Discord OAuth2 Configuration from environment variables
 DISCORD_CLIENT_ID = os.getenv('DISCORD_CLIENT_ID')

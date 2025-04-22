@@ -1,13 +1,13 @@
 import asyncio
 from fastapi import FastAPI
 
-from backend.app.db import connect_db, disconnect_db
-from backend.app.api.discord import discord_router
-from backend.app.api.valorant import valorant
-from backend.app.services.discord_bots import bot1, bot2
-from backend.app.services.update_data import UpdateAllUsersBackgroundRunner
-from backend.app.core.middleware import add_middlewares
-from backend.app.core.exceptions import register_exception_handlers
+from app.db import connect_db, disconnect_db
+from app.api.discord import discord_router
+from app.api.valorant import valorant
+from app.services.discord_bots import bot1, bot2
+from app.services.update_data import UpdateAllUsersBackgroundRunner
+from app.core.middleware import add_middlewares
+from app.core.exceptions import register_exception_handlers
 
 app = FastAPI()
 update_all_users_runner = UpdateAllUsersBackgroundRunner()

@@ -2,7 +2,7 @@ import os
 
 import streamlit as st
 
-from frontend.app.utils.api import get_discord_user_details, check_discord_exists, get_discord_login_url, save_user_data
+from app.utils.api import get_discord_user_details, check_discord_exists, get_discord_login_url, save_user_data
 
 DISCORD_SERVER_INVITE = os.getenv("DISCORD_SERVER_INVITE")
 st.set_page_config(

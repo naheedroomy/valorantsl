@@ -3,18 +3,21 @@ FROM python:3.10.12-slim
 
 # Set the working directory in the container
 WORKDIR /app
-RUN mkdir /app/log
-# Copy the requirements file into the container
+
+# Copy requirements file into the container
 COPY requirements.txt requirements.txt
 
-# Install any needed packages specified in requirements.txt
+# Install dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy the rest of the application code into the container
+# Create log folder
+RUN mkdir /app/log
+
+# Copy the entire application code into the container (from the root, not just backend)
 COPY . .
 
-# Make port 8000 available to the world outside this container
+# Expose port 8000
 EXPOSE 8000
 
-# Run the application
-CMD ["uvicorn", "app:main", "--host", "0.0.0.0", "--port", "8000"]
+# Run the application (ensure the correct path to main.py)
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
