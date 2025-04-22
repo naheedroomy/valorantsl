@@ -12,5 +12,7 @@ spec:
     - name: "80"
       port: 80
       targetPort: 80
+      nodePort: 32620
   selector:
     io.kompose.service: nginx
+  type: NodePort

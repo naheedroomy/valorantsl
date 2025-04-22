@@ -107,7 +107,7 @@ spec:
                 configMapKeyRef:
                   key: VALORANTSL_API_URL
                   name: env
-          image: nginx
+          image: naheedroomy/valorantsl-nginx:1.3
           name: nginx
           ports:
             - containerPort: 80

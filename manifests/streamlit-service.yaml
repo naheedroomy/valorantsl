@@ -12,5 +12,7 @@ spec:
     - name: "8501"
       port: 8501
       targetPort: 8501
+      nodePort: 32520
   selector:
     io.kompose.service: streamlit
+  type: NodePort

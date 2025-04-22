@@ -107,7 +107,7 @@ spec:
                 configMapKeyRef:
                   key: VALORANTSL_API_URL
                   name: env
-          image: streamlit
+          image: naheedroomy/valorantsl-frontend:1.3
           name: streamlit
           ports:
             - containerPort: 8501

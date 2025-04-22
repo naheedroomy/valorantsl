@@ -12,5 +12,7 @@ spec:
     - name: "8000"
       port: 8000
       targetPort: 8000
+      nodePort: 32420
   selector:
     io.kompose.service: fastapi
+  type: NodePort
