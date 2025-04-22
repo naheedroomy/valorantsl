@@ -4,7 +4,7 @@
 
 This project is a comprehensive leaderboard system for Valorant players in Sri Lanka, featuring a FastAPI backend and a Streamlit frontend for ease of use. It allows users to register using their Discord accounts and Riot PUUID, and integrates with MongoDB hosted on MongoAtlas. Additionally, it includes two Discord bots that manage and update user information and roles within the Leaderboard Discord server.
 
-Entire project (apart from the database) is hosted using AWS LightSail.
+Entire project (apart from the database) is hosted on a VPS.
 
 ## Features
 
@@ -26,11 +26,12 @@ Entire project (apart from the database) is hosted using AWS LightSail.
 
 ## Project Structure
 
-- `/`: Contains the FastAPI backend code.
-- `ui/`: Contains the Streamlit frontend code.
-- `utils/`: Contains the code for the Discord bots, and updating users.
-- `database/`: Configuration MongoDB.
+- `backend/`: Contains the FastAPI backend code.
+- `frontend/`: Contains the Streamlit frontend code.
+- `backend/services`: Contains the code for the Discord bots, and updating users.
+- `backend/db.py`: Configuration for MongoDB.
 - `.env.example`: Example environment file for sensitive configurations.
+- `nginx/`: Contains Nginx config file for the reverse proxy
 
 ## Docker and Deployment
 
