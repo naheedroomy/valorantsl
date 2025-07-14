@@ -1,8 +1,6 @@
 import asyncio
 import os
-from contextlib import asynccontextmanager
 
-import aiohttp
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
@@ -16,25 +14,9 @@ from routes.valorant import valorant
 from utils.discord_bots import bot1, bot2
 from utils.update_data import UpdateAllUsersBackgroundRunner
 
+app = FastAPI()
+
 update_all_users_runner = UpdateAllUsersBackgroundRunner()
-
-
-@asynccontextmanager
-async def lifespan(app: FastAPI):
-    # Startup
-    connect_db()
-    session = aiohttp.ClientSession()
-    app.state.http_session = session
-    asyncio.create_task(update_all_users_runner.run_update_all_users(session))
-    asyncio.create_task(bot1.run(session))
-    asyncio.create_task(bot2.run(session))
-    yield
-    # Shutdown
-    await session.close()
-    disconnect_db()
-
-
-app = FastAPI(lifespan=lifespan)
 
 # Configure allowed origins for CORS
 allowed_origins = [
@@ -58,6 +40,27 @@ app.add_middleware(
     SessionMiddleware,
     secret_key=os.getenv("SESSION_SECRET_KEY"),
 )
+
+
+@app.on_event("startup")
+def on_startup():
+    connect_db()
+
+
+@app.on_event('startup')
+async def update_users_on_startup():
+    asyncio.create_task(update_all_users_runner.run_update_all_users())
+
+
+@app.on_event('startup')
+async def start_bots_on_startup():
+    asyncio.create_task(bot1.run())
+    asyncio.create_task(bot2.run())
+
+
+@app.on_event("shutdown")
+def on_shutdown():
+    disconnect_db()
 
 
 # Include routers

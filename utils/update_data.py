@@ -62,17 +62,18 @@ class UpdateAllUsersBackgroundRunner:
         # After max retries, return None or handle as needed
         return None
 
-    async def update_all_users(self, session):
-        puuid_list = await self.get_all_puuids(session)
-        if puuid_list:
-            for puuid in puuid_list:
-                await self.update_account(session, puuid)
-                await asyncio.sleep(2)
-        else:
-            logging.error("Failed to retrieve PUUID list")
+    async def update_all_users(self):
+        async with aiohttp.ClientSession() as session:
+            puuid_list = await self.get_all_puuids(session)
+            if puuid_list:
+                for puuid in puuid_list:
+                    await self.update_account(session, puuid)
+                    time.sleep(2)
+            else:
+                logging.error("Failed to retrieve PUUID list")
 
-    async def run_update_all_users(self, session):
+    async def run_update_all_users(self):
         await asyncio.sleep(20)  # Wait for 20 seconds to ensure the server is fully started
         while True:
-            await self.update_all_users(session)
+            await self.update_all_users()
             await asyncio.sleep(60 * 30)  # 30 min interval
