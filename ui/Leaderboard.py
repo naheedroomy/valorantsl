@@ -2,7 +2,7 @@ import streamlit as st
 
 from utils.api import fetch_leaderboard_data
 from utils.constants import DISCORD_SERVER_INVITE
-from utils.helpers import process_leaderboard_data
+from utils.helpers import process_leaderboard_data, show_github_link
 
 # Set the page configuration
 st.set_page_config(
@@ -97,16 +97,7 @@ def show_leaderboard():
         st.write("No data available for this page.")
 
     # Add GitHub link with logo at the bottom of the page
-    st.markdown(
-        """
-        <div style='text-align: center; margin-top: 50px;'>
-            <a href='https://github.com/naheedroomy/valorantsl' target='_blank'> View Source on GitHub 
-                <img src='https://upload.wikimedia.org/wikipedia/commons/9/91/Octicons-mark-github.svg' alt='GitHub logo' width='50' />
-            </a>
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
+    show_github_link()
 
 
 if __name__ == "__main__":
