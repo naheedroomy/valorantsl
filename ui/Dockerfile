@@ -1,15 +1,15 @@
-# Stage 1: Build the React app
-FROM node:20-alpine as builder
-WORKDIR /app
-COPY ui/package*.json ./
-RUN npm install
-COPY ui/ .
-RUN npm run build
+FROM python:3.10.12-slim
 
-# Stage 2: Serve the app with a static server
-FROM node:20-alpine
 WORKDIR /app
-COPY --from=builder /app/dist ./dist
-RUN npm install -g serve
-EXPOSE 3000
-CMD ["serve", "-s", "dist", "-l", "3000"]
+
+# Copy the requirements.txt file to the /app directory in the container
+COPY ../requirements/ui.txt requirements.txt
+
+# Install the dependencies from requirements.txt
+RUN pip install -r requirements.txt
+
+# Copy the ui subfolder from the current directory on the host to the /app/ui directory in the container
+COPY . .
+
+# Set the command to run the Streamlit app
+CMD ["streamlit", "run", "ui/Leaderboard.py", "--server.port=8501", "--theme.base=dark", "--global.developmentMode=false"]
