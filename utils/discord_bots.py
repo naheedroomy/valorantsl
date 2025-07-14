@@ -60,7 +60,6 @@ class DiscordBotBackgroundRunner:
         self.bot_id = bot_id
         self.client = discord.Client(intents=intents)
         self.logger = logger1 if bot_id == 1 else logger2
-        self.http_session: aiohttp.ClientSession = None
 
         if bot_id == 1:
             @self.client.event
@@ -77,14 +76,15 @@ class DiscordBotBackgroundRunner:
             await self.main_loop()
 
     async def get_info_from_db(self, logger):
-        async with self.http_session.get(f'{VALORANTSL_API_URL}/valorant/leaderboard/all') as response:
-            if response.status == 200:
-                logger.info("Successfully retrieved leaderboard data")
-                data = await response.json()
-                return data
-            else:
-                logger.error(f"Failed to get leaderboard data: HTTP {response.status}")
-                return None
+        async with aiohttp.ClientSession() as session:
+            async with session.get(f'{VALORANTSL_API_URL}/valorant/leaderboard/all') as response:
+                if response.status == 200:
+                    logger.info("Successfully retrieved leaderboard data")
+                    data = await response.json()
+                    return data
+                else:
+                    logger.error(f"Failed to get leaderboard data: HTTP {response.status}")
+                    return None
 
     async def update_database_discord_data(self, member, db_response, logger):
         discord_id = int(member.id)
@@ -98,11 +98,12 @@ class DiscordBotBackgroundRunner:
 
             if abs(discord_id - db_discord_id) <= 200:
                 match_found = True
-                async with self.http_session.put(
-                        f'{VALORANTSL_API_URL}/valorant/update/discord/{db_discord_id}/{discord_id}/{discord_username}') as response:
-                    if response.status == 200:
-                        logger.info(f"Updated database discord_id | {db_discord_id} --> {discord_id},"
-                                    f" discord_username | {db_username} --> {discord_username}")
+                async with aiohttp.ClientSession() as session:
+                    async with session.put(
+                            f'{VALORANTSL_API_URL}/valorant/update/discord/{db_discord_id}/{discord_id}/{discord_username}') as response:
+                        if response.status == 200:
+                            logger.info(f"Updated database discord_id | {db_discord_id} --> {discord_id},"
+                                        f" discord_username | {db_username} --> {discord_username}")
 
         if not match_found:
             logger.info(f"Discord ID {discord_id} not found in database. Username: {discord_username}")
@@ -211,8 +212,7 @@ class DiscordBotBackgroundRunner:
                 self.logger.info("Sleeping for 15 minutes before next iteration.")
                 await asyncio.sleep(15 * 60)
 
-    async def run(self, session: aiohttp.ClientSession):
-        self.http_session = session
+    async def run(self):
         await self.client.start(DISCORD_BOT_TOKEN_1 if self.bot_id == 1 else DISCORD_BOT_TOKEN_2)
 
 

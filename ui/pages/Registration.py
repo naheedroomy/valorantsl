@@ -3,7 +3,6 @@ import os
 import streamlit as st
 
 from utils.api import get_discord_user_details, check_discord_exists, get_discord_login_url, save_user_data
-from utils.helpers import show_github_link
 
 DISCORD_SERVER_INVITE = os.getenv("DISCORD_SERVER_INVITE")
 st.set_page_config(
@@ -71,4 +70,13 @@ else:
         st.error("Failed to retrieve Discord login URL.")
 
 # Add GitHub link with logo at the bottom of the page
-show_github_link()
+st.markdown(
+    """
+    <div style='text-align: center; margin-top: 50px;'>
+        <a href='https://github.com/naheedroomy/valorantsl' target='_blank'> View Source on GitHub 
+            <img src='https://upload.wikimedia.org/wikipedia/commons/9/91/Octicons-mark-github.svg' alt='GitHub logo' width='50' />
+        </a>
+    </div>
+    """,
+    unsafe_allow_html=True
+)
