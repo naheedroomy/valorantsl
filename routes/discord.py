@@ -14,7 +14,7 @@ DISCORD_CLIENT_SECRET = os.getenv('DISCORD_CLIENT_SECRET')
 DISCORD_ENV = os.getenv('DISCORD_ENV', 'test')
 
 DISCORD_REDIRECT_URI = os.getenv('DISCORD_REDIRECT_URI', 'http://localhost:8000/discord/callback')
-CALLBACK_REDIRECT_URI = os.getenv('CALLBACK_REDIRECT_URI', 'http://localhost:5173/callback')
+CALLBACK_REDIRECT_URI = os.getenv('CALLBACK_REDIRECT_URI', 'http://localhost:8501/Registration')
 
 # Check if environment variables are set
 if not DISCORD_CLIENT_ID or not DISCORD_CLIENT_SECRET:
