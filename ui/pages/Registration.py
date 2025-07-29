@@ -32,7 +32,7 @@ if access_token:
         st.subheader("2. Enter Riot PUUID ")
         st.markdown(
             """
-            <a href="https://docs.google.com/document/d/e/2PACX-1vRT5C5nub3jG5DWaCDb4Mk1OaFeTVOVm-7wSg16Pco-PmDsX1I10N9n_LxiMKRs02WCNUwFJmypMa5f/pub" target="_blank" style="display: inline-block; margin-bottom: 1rem;">
+            <a href="https://docs.google.com/document/d/e/2PACX-1vQMM-QwU743I9eq4ETtFDvfgkm5kgyRSPGUOlS-8PEAsqpeDNkuBMNDSJq19Zckbk4k5I6nCeU0M68I/pub" target="_blank" style="display: inline-block; margin-bottom: 1rem;">
                 How do I find my Riot PUUID?
             </a>
             """,
