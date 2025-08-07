@@ -57,7 +57,7 @@ const Leaderboard = () => {
     return (
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="flex items-center justify-center min-h-96">
-          <RefreshCw className="animate-spin text-valorant-red" size={48} />
+          <RefreshCw className="animate-spin text-white" size={48} />
         </div>
       </div>
     );
@@ -70,7 +70,7 @@ const Leaderboard = () => {
           <p className="text-red-400 text-xl">{error}</p>
           <button
             onClick={() => fetchData(currentPage)}
-            className="mt-4 bg-valorant-red hover:bg-red-600 text-white px-4 py-2 rounded-md transition-colors"
+            className="mt-4 bg-white hover:bg-gray-200 text-black px-4 py-2 rounded-md transition-colors"
           >
             Retry
           </button>
@@ -93,10 +93,10 @@ const Leaderboard = () => {
         </p>
       </div>
 
-      <div className="bg-black/30 backdrop-blur-sm rounded-xl border border-gray-700/50 overflow-hidden">
+      <div className="bg-secondary rounded-xl border border-white/20 overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full">
-            <thead className="bg-gray-800/50 border-b border-gray-700/50">
+            <thead className="bg-black border-b border-white/20">
               <tr>
                 <th className="px-6 py-4 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
                   Rank
@@ -115,14 +115,14 @@ const Leaderboard = () => {
                 </th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-700/50">
+            <tbody className="divide-y divide-white/20">
               {data.map((player, index) => {
                 const position = startIndex + index;
                 const details = player.rank_details?.data;
                 const profileUrl = `https://tracker.gg/valorant/profile/riot/${player.name}%23${player.tag}/overview`;
 
                 return (
-                  <tr key={player._id || index} className="hover:bg-gray-800/30 transition-colors">
+                  <tr key={player._id || index} className="hover:bg-white/10 transition-colors">
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center space-x-2">
                         {getRankIcon(position)}
@@ -142,7 +142,7 @@ const Leaderboard = () => {
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <span className="text-lg font-semibold text-valorant-red">
+                      <span className="text-lg font-semibold text-white">
                         {details?.elo?.toLocaleString() || 'N/A'}
                       </span>
                     </td>
@@ -156,7 +156,7 @@ const Leaderboard = () => {
                         href={profileUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-valorant-blue hover:text-blue-400 transition-colors flex items-center space-x-1"
+                        className="text-white hover:text-gray-300 transition-colors flex items-center space-x-1"
                       >
                         <span className="text-sm">View</span>
                         <ExternalLink size={14} />
@@ -171,7 +171,7 @@ const Leaderboard = () => {
 
         {/* Pagination */}
         {totalPages > 1 && (
-          <div className="bg-gray-800/30 px-6 py-4 border-t border-gray-700/50">
+          <div className="bg-black px-6 py-4 border-t border-white/20">
             <div className="flex items-center justify-between">
               <div className="text-sm text-gray-400">
                 Showing {startIndex} to {Math.min(startIndex + pageSize - 1, totalCount)} of {totalCount} players
@@ -181,7 +181,7 @@ const Leaderboard = () => {
                 <button
                   onClick={() => setCurrentPage(page => Math.max(1, page - 1))}
                   disabled={currentPage === 1}
-                  className="flex items-center space-x-1 px-3 py-2 rounded-md border border-gray-600 text-sm font-medium text-gray-300 bg-gray-800 hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  className="flex items-center space-x-1 px-3 py-2 rounded-md border border-white/20 text-sm font-medium text-white bg-secondary hover:bg-white/10 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                 >
                   <ChevronLeft size={16} />
                   <span>Previous</span>
@@ -194,7 +194,7 @@ const Leaderboard = () => {
                 <button
                   onClick={() => setCurrentPage(page => Math.min(totalPages, page + 1))}
                   disabled={currentPage === totalPages}
-                  className="flex items-center space-x-1 px-3 py-2 rounded-md border border-gray-600 text-sm font-medium text-gray-300 bg-gray-800 hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  className="flex items-center space-x-1 px-3 py-2 rounded-md border border-white/20 text-sm font-medium text-white bg-secondary hover:bg-white/10 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                 >
                   <span>Next</span>
                   <ChevronRight size={16} />

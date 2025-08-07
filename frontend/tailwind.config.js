@@ -7,11 +7,10 @@ export default {
   theme: {
     extend: {
       colors: {
-        valorant: {
-          red: '#FF4655',
-          dark: '#0F1923',
-          blue: '#00D4FF',
-        }
+        primary: '#000000',
+        secondary: '#1a1a1a',
+        accent: '#ffffff',
+        muted: '#666666',
       }
     },
   },

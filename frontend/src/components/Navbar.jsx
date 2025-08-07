@@ -5,7 +5,7 @@ const Navbar = () => {
   const location = useLocation();
 
   return (
-    <nav className="bg-black/20 backdrop-blur-sm border-b border-gray-700/50">
+    <nav className="bg-black border-b border-white/20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center space-x-3">
@@ -14,7 +14,7 @@ const Navbar = () => {
               alt="ValSL" 
               className="w-8 h-8 rounded-full"
             />
-            <h1 className="text-xl font-bold text-valorant-red">
+            <h1 className="text-xl font-bold text-white">
               Sri Lanka Valorant Leaderboard
             </h1>
           </div>
@@ -24,8 +24,8 @@ const Navbar = () => {
               to="/"
               className={`flex items-center space-x-2 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
                 location.pathname === '/'
-                  ? 'bg-valorant-red text-white'
-                  : 'text-gray-300 hover:bg-gray-700 hover:text-white'
+                  ? 'bg-white text-black'
+                  : 'text-gray-300 hover:bg-white/10 hover:text-white'
               }`}
             >
               <Trophy size={18} />
@@ -36,8 +36,8 @@ const Navbar = () => {
               to="/register"
               className={`flex items-center space-x-2 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
                 location.pathname === '/register'
-                  ? 'bg-valorant-red text-white'
-                  : 'text-gray-300 hover:bg-gray-700 hover:text-white'
+                  ? 'bg-white text-black'
+                  : 'text-gray-300 hover:bg-white/10 hover:text-white'
               }`}
             >
               <UserPlus size={18} />
@@ -48,7 +48,7 @@ const Navbar = () => {
               href={import.meta.env.VITE_DISCORD_INVITE || '#'}
               target="_blank"
               rel="noopener noreferrer"
-              className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors"
+              className="bg-white hover:bg-gray-200 text-black px-4 py-2 rounded-md text-sm font-medium transition-colors"
             >
               Join Discord
             </a>

@@ -93,7 +93,7 @@ const Registration = () => {
 
   return (
     <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <div className="bg-black/30 backdrop-blur-sm rounded-xl border border-gray-700/50 p-8">
+      <div className="bg-secondary rounded-xl border border-white/20 p-8">
         <h1 className="text-3xl font-bold text-white mb-2 text-center">
           Join the Leaderboard
         </h1>
@@ -132,7 +132,7 @@ const Registration = () => {
                   {discordLoginUrl ? (
                     <a
                       href={discordLoginUrl}
-                      className="inline-flex items-center space-x-3 bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-lg text-lg font-medium transition-colors"
+                      className="inline-flex items-center space-x-3 bg-white hover:bg-gray-200 text-black px-6 py-3 rounded-lg text-lg font-medium transition-colors"
                     >
                       <svg width="24" height="24" viewBox="0 0 71 55" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <g clipPath="url(#clip0)">
@@ -174,7 +174,7 @@ const Registration = () => {
                   href="https://docs.google.com/document/d/e/2PACX-1vQMM-QwU743I9eq4ETtFDvfgkm5kgyRSPGUOlS-8PEAsqpeDNkuBMNDSJq19Zckbk4k5I6nCeU0M68I/pub"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-valorant-blue hover:text-blue-400 transition-colors inline-flex items-center space-x-1"
+                  className="text-white hover:text-gray-300 transition-colors inline-flex items-center space-x-1"
                 >
                   <span>How do I find my Riot PUUID?</span>
                   <ExternalLink size={16} />
@@ -188,7 +188,7 @@ const Registration = () => {
                     value={puuid}
                     onChange={(e) => setPuuid(e.target.value)}
                     placeholder="Enter your Riot PUUID"
-                    className="w-full px-4 py-3 bg-gray-800 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-valorant-red transition-colors"
+                    className="w-full px-4 py-3 bg-black border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-white transition-colors"
                     disabled={loading}
                   />
                 </div>
@@ -197,7 +197,7 @@ const Registration = () => {
                   <button
                     type="button"
                     onClick={resetRegistration}
-                    className="flex-1 px-4 py-3 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition-colors"
+                    className="flex-1 px-4 py-3 bg-black hover:bg-white/10 text-white rounded-lg border border-white/20 transition-colors"
                     disabled={loading}
                   >
                     Back
@@ -205,7 +205,7 @@ const Registration = () => {
                   <button
                     type="submit"
                     disabled={loading || !puuid.trim()}
-                    className="flex-1 bg-valorant-red hover:bg-red-600 disabled:bg-gray-600 disabled:cursor-not-allowed text-white px-4 py-3 rounded-lg transition-colors flex items-center justify-center space-x-2"
+                    className="flex-1 bg-white hover:bg-gray-200 disabled:bg-muted disabled:cursor-not-allowed text-black px-4 py-3 rounded-lg transition-colors flex items-center justify-center space-x-2"
                   >
                     {loading ? (
                       <>
@@ -232,7 +232,7 @@ const Registration = () => {
               </h2>
             </div>
 
-            <div className="bg-gray-800/50 rounded-lg p-6 text-left">
+            <div className="bg-black rounded-lg p-6 text-left border border-white/20">
               <h3 className="text-lg font-medium text-white mb-4">Your Details:</h3>
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between">
@@ -258,7 +258,7 @@ const Registration = () => {
                 href={import.meta.env.VITE_DISCORD_INVITE || '#'}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center space-x-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md transition-colors"
+                className="inline-flex items-center space-x-2 bg-white hover:bg-gray-200 text-black px-4 py-2 rounded-md transition-colors"
               >
                 <span>Join our Discord Server!</span>
                 <ExternalLink size={16} />
@@ -267,7 +267,7 @@ const Registration = () => {
 
             <button
               onClick={resetRegistration}
-              className="bg-gray-700 hover:bg-gray-600 text-white px-6 py-2 rounded-lg transition-colors"
+              className="bg-black hover:bg-white/10 text-white px-6 py-2 rounded-lg border border-white/20 transition-colors"
             >
               Register Another User
             </button>
