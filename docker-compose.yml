@@ -12,30 +12,16 @@ services:
     volumes:
       - ./log:/app/log
 
-  frontend:
+  streamlit:
     build:
-      context: ./frontend
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: ui/Dockerfile
     ports:
-      - "3000:3000"
+      - "8501:8501"
     env_file:
       - .env
     networks:
       - app-network
-    depends_on:
-      - fastapi
-
-  # Legacy Streamlit UI (commented out - can be removed later)
-  # streamlit:
-  #   build:
-  #     context: .
-  #     dockerfile: ui/Dockerfile
-  #   ports:
-  #     - "8501:8501"
-  #   env_file:
-  #     - .env
-  #   networks:
-  #     - app-network
     
   nginx:
     build:
@@ -47,9 +33,6 @@ services:
       - .env
     networks:
       - app-network
-    depends_on:
-      - fastapi
-      - frontend
 
 
 networks:
