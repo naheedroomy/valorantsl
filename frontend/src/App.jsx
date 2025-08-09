@@ -28,7 +28,7 @@ function App() {
           page,
           page_size: pageSize
         },
-        timeout: 10000 // 10 second timeout
+        timeout: 10000
       })
       
       console.log('Leaderboard response:', response)
@@ -57,29 +57,34 @@ function App() {
   const getRankIcon = (position) => {
     switch (position) {
       case 1:
-        return <Crown className="w-6 h-6 text-yellow-400" />
+        return <Crown className="w-7 h-7 text-yellow-400" />
       case 2:
-        return <Trophy className="w-6 h-6 text-gray-300" />
+        return <Trophy className="w-7 h-7 text-slate-300" />
       case 3:
-        return <Medal className="w-6 h-6 text-amber-600" />
+        return <Medal className="w-7 h-7 text-orange-400" />
       default:
-        return <span className="text-lg font-bold text-gray-400">#{position}</span>
+        return <span className="text-2xl font-bold text-slate-400">#{position}</span>
     }
   }
 
-  const getCardClass = (position) => {
-    const baseClass = "bg-gradient-to-r backdrop-blur-sm border rounded-xl p-6 transition-all duration-300 hover:scale-105 hover:shadow-2xl"
+  const getTopCardClass = (position) => {
+    const baseClass = "bg-slate-800/90 backdrop-blur-sm border-2 rounded-2xl p-8 transition-all duration-300 hover:scale-105 hover:shadow-2xl cursor-pointer relative overflow-hidden"
     
     switch (position) {
       case 1:
-        return `${baseClass} from-yellow-500/20 to-yellow-600/10 border-yellow-400/30 shadow-yellow-400/20`
+        return `${baseClass} border-yellow-400/60 shadow-yellow-400/20 hover:shadow-yellow-400/40 hover:border-yellow-400/80`
       case 2:
-        return `${baseClass} from-gray-400/20 to-gray-500/10 border-gray-300/30 shadow-gray-300/20`
+        return `${baseClass} border-slate-400/60 shadow-slate-400/20 hover:shadow-slate-400/40 hover:border-slate-400/80`
       case 3:
-        return `${baseClass} from-amber-500/20 to-amber-600/10 border-amber-400/30 shadow-amber-400/20`
+        return `${baseClass} border-orange-400/60 shadow-orange-400/20 hover:shadow-orange-400/40 hover:border-orange-400/80`
       default:
-        return `${baseClass} from-blue-500/10 to-purple-500/10 border-white/10 hover:border-white/20`
+        return `${baseClass} border-slate-600/60 hover:border-slate-500/80`
     }
+  }
+
+  const openProfile = (playerName, playerTag) => {
+    const profileLink = `https://tracker.gg/valorant/profile/riot/${playerName}%23${playerTag}/overview`
+    window.open(profileLink, '_blank')
   }
 
   const totalPages = Math.ceil(totalCount / pageSize)
@@ -87,10 +92,11 @@ function App() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900">
+      <div className="min-h-screen flex items-center justify-center bg-slate-900">
         <div className="text-center">
-          <div className="w-16 h-16 border-4 border-blue-400 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-white text-xl">Loading leaderboard...</p>
+          <div className="w-20 h-20 border-4 border-red-500 border-t-transparent rounded-full animate-spin mx-auto mb-6"></div>
+          <p className="text-white text-2xl font-semibold">Loading leaderboard...</p>
+          <p className="text-slate-400 mt-2">Fetching player rankings</p>
         </div>
       </div>
     )
@@ -98,17 +104,17 @@ function App() {
 
   if (error) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900">
-        <div className="text-center max-w-2xl mx-auto p-8">
-          <div className="bg-red-900/20 border border-red-500/30 rounded-xl p-6 mb-6">
-            <h2 className="text-red-400 text-2xl font-bold mb-4">Connection Error</h2>
-            <p className="text-red-300 text-lg mb-4">{error}</p>
-            <div className="text-gray-400 text-sm space-y-2">
-              <p><strong>API URL:</strong> {API_URL}</p>
-              <p><strong>Troubleshooting:</strong></p>
-              <ul className="list-disc list-inside space-y-1 text-left">
+      <div className="min-h-screen flex items-center justify-center bg-slate-900 p-4">
+        <div className="text-center max-w-2xl mx-auto">
+          <div className="bg-red-900/30 border border-red-500/50 rounded-2xl p-8 mb-8">
+            <h2 className="text-red-400 text-3xl font-bold mb-6">Connection Error</h2>
+            <p className="text-red-300 text-xl mb-6">{error}</p>
+            <div className="text-slate-300 text-sm space-y-3 bg-slate-800/50 p-6 rounded-xl">
+              <p><strong className="text-white">API URL:</strong> {API_URL}</p>
+              <p><strong className="text-white">Troubleshooting:</strong></p>
+              <ul className="list-disc list-inside space-y-2 text-left">
                 <li>Make sure the backend API is running</li>
-                <li>Check if Docker containers are up: <code className="bg-gray-800 px-2 py-1 rounded">docker-compose ps</code></li>
+                <li>Check if Docker containers are up: <code className="bg-slate-700 px-2 py-1 rounded text-yellow-300">docker-compose ps</code></li>
                 <li>Verify CORS settings allow your domain</li>
                 <li>Check browser console for more details</li>
               </ul>
@@ -116,7 +122,7 @@ function App() {
           </div>
           <button 
             onClick={() => fetchLeaderboard(currentPage)}
-            className="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-colors"
+            className="px-10 py-4 bg-red-600 hover:bg-red-700 text-white font-bold text-lg rounded-xl transition-all duration-200 hover:scale-105"
           >
             Retry Connection
           </button>
@@ -126,20 +132,20 @@ function App() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 text-white">
+    <div className="min-h-screen bg-slate-900 text-white">
       {/* Header */}
-      <header className="bg-black/20 backdrop-blur-md border-b border-white/10 sticky top-0 z-50">
-        <div className="container mx-auto px-4 py-6">
-          <div className="flex items-center justify-between">
+      <header className="bg-slate-800/95 backdrop-blur-md border-b border-slate-700 sticky top-0 z-50">
+        <div className="container mx-auto px-6 py-6">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
             <div className="flex items-center space-x-4">
-              <div className="w-12 h-12 bg-gradient-to-br from-red-500 to-red-600 rounded-lg flex items-center justify-center">
-                <Trophy className="w-6 h-6 text-white" />
+              <div className="w-14 h-14 bg-gradient-to-br from-red-500 to-red-600 rounded-xl flex items-center justify-center shadow-lg">
+                <Trophy className="w-8 h-8 text-white" />
               </div>
               <div>
-                <h1 className="text-3xl font-bold bg-gradient-to-r from-red-400 to-red-600 bg-clip-text text-transparent">
+                <h1 className="text-3xl font-bold text-white">
                   Sri Lanka Valorant Leaderboard
                 </h1>
-                <p className="text-gray-400 text-sm">Updated every 30 minutes</p>
+                <p className="text-slate-400 text-sm">Updated every 30 minutes</p>
               </div>
             </div>
             <div className="flex items-center space-x-4">
@@ -147,19 +153,19 @@ function App() {
                 href={DISCORD_INVITE}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center space-x-2 bg-indigo-600 hover:bg-indigo-700 px-4 py-2 rounded-lg transition-colors"
+                className="flex items-center space-x-2 bg-indigo-600 hover:bg-indigo-700 px-5 py-3 rounded-xl transition-all duration-200 hover:scale-105 font-semibold"
               >
-                <Users className="w-4 h-4" />
+                <Users className="w-5 h-5" />
                 <span>Join Discord</span>
               </a>
               <a
                 href="https://github.com/naheedroomy/valorantsl"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center space-x-2 bg-gray-700 hover:bg-gray-600 px-4 py-2 rounded-lg transition-colors"
+                className="flex items-center space-x-2 bg-slate-700 hover:bg-slate-600 px-5 py-3 rounded-xl transition-all duration-200 hover:scale-105 font-semibold"
               >
-                <Github className="w-4 h-4" />
-                <span>View Source</span>
+                <Github className="w-5 h-5" />
+                <span>Source</span>
               </a>
             </div>
           </div>
@@ -167,68 +173,66 @@ function App() {
       </header>
 
       {/* Main Content */}
-      <main className="container mx-auto px-4 py-8">
-        <div className="mb-8 text-center">
-          <p className="text-gray-300 mb-4">
-            To register yourself on the leaderboard, click on the Discord button above to join our server.
+      <main className="container mx-auto px-6 py-12">
+        <div className="mb-12 text-center">
+          <p className="text-slate-300 text-lg mb-6">
+            To register yourself on the leaderboard, click the Discord button above to join our server.
           </p>
         </div>
 
         {/* Top 3 Players */}
         {leaderboardData.length >= 3 && currentPage === 1 && (
-          <div className="mb-12">
-            <h2 className="text-2xl font-bold text-center mb-8 bg-gradient-to-r from-yellow-400 to-red-400 bg-clip-text text-transparent">
+          <div className="mb-16">
+            <h2 className="text-4xl font-bold text-center mb-12 bg-gradient-to-r from-yellow-400 via-red-500 to-purple-500 bg-clip-text text-transparent">
               🏆 Top 3 Champions 🏆
             </h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl mx-auto">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
               {leaderboardData.slice(0, 3).map((player, index) => {
                 const position = startIndex + index + 1
                 const details = player.rank_details.data
                 const username = `${player.name}#${player.tag}`
-                const profileLink = `https://tracker.gg/valorant/profile/riot/${player.name}%23${player.tag}/overview`
 
                 return (
-                  <div key={player.puuid} className={`${getCardClass(position)} relative overflow-hidden`}>
-                    <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-white/5 to-transparent rounded-bl-full"></div>
+                  <div 
+                    key={player.puuid} 
+                    className={getTopCardClass(position)}
+                    onClick={() => openProfile(player.name, player.tag)}
+                  >
+                    <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-white/5 to-transparent rounded-bl-full"></div>
                     
-                    <div className="flex items-center justify-between mb-4">
-                      <div className="flex items-center space-x-3">
+                    <div className="flex items-center justify-between mb-8">
+                      <div className="flex items-center space-x-4">
                         {getRankIcon(position)}
-                        <span className="text-2xl font-bold">#{position}</span>
+                        <span className="text-3xl font-bold text-white">#{position}</span>
                       </div>
                       <div className="text-right">
-                        <div className="text-lg font-semibold text-blue-300">{details.elo}</div>
-                        <div className="text-sm text-gray-400">ELO</div>
+                        <div className="text-2xl font-bold text-white">{details.elo}</div>
+                        <div className="text-sm text-slate-400 uppercase tracking-wider">ELO</div>
                       </div>
                     </div>
 
-                    <div className="mb-4">
-                      <h3 className="text-xl font-bold mb-2 text-white truncate" title={username}>
+                    <div className="mb-6">
+                      <h3 className="text-2xl font-bold mb-3 text-white truncate" title={username}>
                         {player.name}
                       </h3>
-                      <div className="flex items-center space-x-2 mb-3">
+                      <div className="flex items-center space-x-3 mb-4">
                         {details.images?.small && (
                           <img 
                             src={details.images.small} 
                             alt={details.currenttierpatched}
-                            className="w-8 h-8 rounded"
+                            className="w-10 h-10 rounded-lg"
                           />
                         )}
-                        <span className="text-lg font-medium text-gray-300">
+                        <span className="text-xl font-semibold text-slate-200">
                           {details.currenttierpatched}
                         </span>
                       </div>
                     </div>
 
-                    <a
-                      href={profileLink}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center justify-center space-x-2 bg-blue-600/20 hover:bg-blue-600/30 border border-blue-500/30 text-blue-300 hover:text-blue-200 px-4 py-2 rounded-lg transition-all duration-200"
-                    >
-                      <ExternalLink className="w-4 h-4" />
-                      <span>View Profile</span>
-                    </a>
+                    <div className="flex items-center justify-center space-x-2 text-slate-300 hover:text-white transition-colors">
+                      <ExternalLink className="w-5 h-5" />
+                      <span className="font-semibold">Click to View Profile</span>
+                    </div>
                   </div>
                 )
               })}
@@ -237,21 +241,23 @@ function App() {
         )}
 
         {/* Full Leaderboard */}
-        <div className="bg-black/20 backdrop-blur-md rounded-xl border border-white/10 overflow-hidden">
-          <div className="p-6 border-b border-white/10">
-            <h2 className="text-xl font-bold">Full Leaderboard</h2>
-            <p className="text-gray-400 text-sm">Page {currentPage} of {totalPages}</p>
+        <div className="bg-slate-800/50 backdrop-blur-md rounded-2xl border border-slate-700 overflow-hidden shadow-2xl">
+          <div className="p-8 border-b border-slate-700 bg-slate-800/70">
+            <h2 className="text-3xl font-bold text-white mb-2">Full Leaderboard</h2>
+            <div className="flex justify-between items-center text-slate-400">
+              <p>Page {currentPage} of {totalPages}</p>
+              <p>{totalCount} total players</p>
+            </div>
           </div>
 
           <div className="overflow-x-auto">
             <table className="w-full">
-              <thead className="bg-white/5">
+              <thead className="bg-slate-700/50">
                 <tr>
-                  <th className="text-left py-4 px-6 font-semibold">Rank</th>
-                  <th className="text-left py-4 px-6 font-semibold">Player</th>
-                  <th className="text-left py-4 px-6 font-semibold">Current Rank</th>
-                  <th className="text-left py-4 px-6 font-semibold">ELO</th>
-                  <th className="text-center py-4 px-6 font-semibold">Profile</th>
+                  <th className="text-left py-6 px-8 font-bold text-white text-lg">Rank</th>
+                  <th className="text-left py-6 px-8 font-bold text-white text-lg">Player</th>
+                  <th className="text-left py-6 px-8 font-bold text-white text-lg">Current Rank</th>
+                  <th className="text-left py-6 px-8 font-bold text-white text-lg">ELO</th>
                 </tr>
               </thead>
               <tbody>
@@ -259,53 +265,42 @@ function App() {
                   const position = startIndex + index + 1
                   const details = player.rank_details.data
                   const username = `${player.name}#${player.tag}`
-                  const profileLink = `https://tracker.gg/valorant/profile/riot/${player.name}%23${player.tag}/overview`
 
                   return (
                     <tr 
                       key={player.puuid} 
-                      className={`border-b border-white/5 hover:bg-white/5 transition-colors ${
-                        position <= 3 && currentPage === 1 ? 'bg-gradient-to-r from-yellow-500/5 to-transparent' : ''
+                      className={`border-b border-slate-700/50 hover:bg-slate-700/30 transition-all duration-200 cursor-pointer group ${
+                        position <= 3 && currentPage === 1 ? 'bg-gradient-to-r from-yellow-500/5 via-transparent to-transparent' : ''
                       }`}
+                      onClick={() => openProfile(player.name, player.tag)}
                     >
-                      <td className="py-4 px-6">
-                        <div className="flex items-center space-x-2">
+                      <td className="py-6 px-8">
+                        <div className="flex items-center space-x-3">
                           {position <= 3 && currentPage === 1 ? getRankIcon(position) : (
-                            <span className="text-gray-400 font-semibold">#{position}</span>
+                            <span className="text-slate-300 font-bold text-xl">#{position}</span>
                           )}
                         </div>
                       </td>
-                      <td className="py-4 px-6">
-                        <div className="font-semibold text-white truncate max-w-48" title={username}>
+                      <td className="py-6 px-8">
+                        <div className="font-bold text-white text-lg truncate max-w-64 group-hover:text-blue-400 transition-colors" title={username}>
                           {player.name}
                         </div>
-                        <div className="text-sm text-gray-400">#{player.tag}</div>
+                        <div className="text-slate-400 text-sm">#{player.tag}</div>
                       </td>
-                      <td className="py-4 px-6">
-                        <div className="flex items-center space-x-2">
+                      <td className="py-6 px-8">
+                        <div className="flex items-center space-x-3">
                           {details.images?.small && (
                             <img 
                               src={details.images.small} 
                               alt={details.currenttierpatched}
-                              className="w-6 h-6 rounded"
+                              className="w-8 h-8 rounded"
                             />
                           )}
-                          <span className="text-gray-300">{details.currenttierpatched}</span>
+                          <span className="text-slate-200 font-semibold">{details.currenttierpatched}</span>
                         </div>
                       </td>
-                      <td className="py-4 px-6">
-                        <span className="font-semibold text-blue-300">{details.elo}</span>
-                      </td>
-                      <td className="py-4 px-6 text-center">
-                        <a
-                          href={profileLink}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex items-center space-x-1 bg-blue-600/20 hover:bg-blue-600/30 border border-blue-500/30 text-blue-300 hover:text-blue-200 px-3 py-1 rounded-md text-sm transition-all duration-200"
-                        >
-                          <ExternalLink className="w-3 h-3" />
-                          <span>View</span>
-                        </a>
+                      <td className="py-6 px-8">
+                        <span className="font-bold text-xl text-white">{details.elo}</span>
                       </td>
                     </tr>
                   )
@@ -316,32 +311,33 @@ function App() {
 
           {/* Pagination */}
           {totalPages > 1 && (
-            <div className="flex items-center justify-between p-6 border-t border-white/10">
+            <div className="flex items-center justify-between p-8 border-t border-slate-700 bg-slate-800/70">
               <button
                 onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
                 disabled={currentPage === 1}
-                className="flex items-center space-x-2 px-4 py-2 bg-gray-700 hover:bg-gray-600 disabled:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-lg transition-colors"
+                className="flex items-center space-x-3 px-6 py-4 bg-slate-700 hover:bg-slate-600 disabled:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold rounded-xl transition-all duration-200 hover:scale-105 disabled:hover:scale-100"
               >
-                <ChevronLeft className="w-4 h-4" />
+                <ChevronLeft className="w-5 h-5" />
                 <span>Previous</span>
               </button>
               
-              <div className="flex items-center space-x-4">
-                <span className="text-gray-400">
+              <div className="flex items-center space-x-6 text-slate-300">
+                <span className="text-lg font-semibold">
                   Page {currentPage} of {totalPages}
                 </span>
-                <span className="text-gray-500">
-                  ({totalCount} total players)
+                <div className="h-6 w-px bg-slate-600"></div>
+                <span className="text-sm">
+                  {totalCount} total players
                 </span>
               </div>
 
               <button
                 onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
                 disabled={currentPage === totalPages}
-                className="flex items-center space-x-2 px-4 py-2 bg-gray-700 hover:bg-gray-600 disabled:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-lg transition-colors"
+                className="flex items-center space-x-3 px-6 py-4 bg-slate-700 hover:bg-slate-600 disabled:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold rounded-xl transition-all duration-200 hover:scale-105 disabled:hover:scale-100"
               >
                 <span>Next</span>
-                <ChevronRight className="w-4 h-4" />
+                <ChevronRight className="w-5 h-5" />
               </button>
             </div>
           )}

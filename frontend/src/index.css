@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -11,23 +11,62 @@
 body {
   margin: 0;
   min-height: 100vh;
-  background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%);
+  background: #0f172a; /* slate-900 */
+  color: white;
+  overflow-x: hidden;
 }
 
 /* Custom scrollbar */
 ::-webkit-scrollbar {
-  width: 8px;
+  width: 12px;
 }
 
 ::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.1);
+  background: #1e293b; /* slate-800 */
+  border-radius: 6px;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.3);
-  border-radius: 4px;
+  background: linear-gradient(180deg, #64748b, #475569); /* slate-500 to slate-600 */
+  border-radius: 6px;
+  border: 2px solid #1e293b;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.5);
+  background: linear-gradient(180deg, #475569, #334155); /* slate-600 to slate-700 */
+}
+
+/* Selection styling */
+::selection {
+  background: #3b82f6; /* blue-500 */
+  color: white;
+}
+
+::-moz-selection {
+  background: #3b82f6; /* blue-500 */
+  color: white;
+}
+
+/* Focus outline improvements */
+button:focus-visible,
+a:focus-visible {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Hide scrollbar for tables on mobile while keeping functionality */
+@media (max-width: 768px) {
+  .table-container {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  
+  .table-container::-webkit-scrollbar {
+    display: none;
+  }
 }
