@@ -20,16 +20,34 @@ function App() {
   const fetchLeaderboard = async (page) => {
     try {
       setLoading(true)
+      setError(null)
+      console.log(`Fetching leaderboard from: ${API_URL}/valorant/leaderboard`)
+      
       const response = await axios.get(`${API_URL}/valorant/leaderboard`, {
         params: {
           page,
           page_size: pageSize
-        }
+        },
+        timeout: 10000 // 10 second timeout
       })
+      
+      console.log('Leaderboard response:', response)
       setLeaderboardData(response.data)
       setTotalCount(parseInt(response.headers['x-total-count'] || 0))
     } catch (err) {
-      setError('Failed to load leaderboard data')
+      let errorMessage = 'Failed to load leaderboard data'
+      
+      if (err.code === 'ECONNREFUSED') {
+        errorMessage = `Cannot connect to API server at ${API_URL}. Make sure the backend is running.`
+      } else if (err.response) {
+        errorMessage = `API Error: ${err.response.status} - ${err.response.statusText}`
+      } else if (err.request) {
+        errorMessage = `Network Error: Unable to reach ${API_URL}. Check your connection and CORS settings.`
+      } else {
+        errorMessage = `Error: ${err.message}`
+      }
+      
+      setError(errorMessage)
       console.error('Error fetching leaderboard:', err)
     } finally {
       setLoading(false)
@@ -81,13 +99,26 @@ function App() {
   if (error) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900">
-        <div className="text-center text-red-400">
-          <p className="text-xl mb-4">{error}</p>
+        <div className="text-center max-w-2xl mx-auto p-8">
+          <div className="bg-red-900/20 border border-red-500/30 rounded-xl p-6 mb-6">
+            <h2 className="text-red-400 text-2xl font-bold mb-4">Connection Error</h2>
+            <p className="text-red-300 text-lg mb-4">{error}</p>
+            <div className="text-gray-400 text-sm space-y-2">
+              <p><strong>API URL:</strong> {API_URL}</p>
+              <p><strong>Troubleshooting:</strong></p>
+              <ul className="list-disc list-inside space-y-1 text-left">
+                <li>Make sure the backend API is running</li>
+                <li>Check if Docker containers are up: <code className="bg-gray-800 px-2 py-1 rounded">docker-compose ps</code></li>
+                <li>Verify CORS settings allow your domain</li>
+                <li>Check browser console for more details</li>
+              </ul>
+            </div>
+          </div>
           <button 
             onClick={() => fetchLeaderboard(currentPage)}
-            className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+            className="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-colors"
           >
-            Retry
+            Retry Connection
           </button>
         </div>
       </div>
