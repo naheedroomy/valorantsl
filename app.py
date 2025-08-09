@@ -20,7 +20,8 @@ update_all_users_runner = UpdateAllUsersBackgroundRunner()
 
 # Configure allowed origins for CORS
 allowed_origins = [
-    "http://localhost:8501",
+    "http://localhost:5173",  # Vite dev server
+    "http://localhost:3000",  # React production build
     "http://127.0.0.1",
     "https://valorantsl.com",
     "https://www.valorantsl.com",

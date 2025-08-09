@@ -12,12 +12,12 @@ services:
     volumes:
       - ./log:/app/log
 
-  streamlit:
+  frontend:
     build:
-      context: .
-      dockerfile: ui/Dockerfile
+      context: ./frontend
+      dockerfile: Dockerfile
     ports:
-      - "8501:8501"
+      - "3000:3000"
     env_file:
       - .env
     networks:
