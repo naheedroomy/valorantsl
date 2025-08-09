@@ -32,8 +32,15 @@ function App() {
       })
       
       console.log('Leaderboard response:', response)
+      console.log('Response headers:', response.headers)
+      console.log('Response data length:', response.data.length)
       setLeaderboardData(response.data)
-      setTotalCount(parseInt(response.headers['x-total-count'] || 0))
+      
+      // Try to get total count from headers (case-insensitive)
+      const headerTotal = response.headers['x-total-count'] || response.headers['X-Total-Count']
+      const totalCount = headerTotal ? parseInt(headerTotal) : 0
+      console.log('Header total:', headerTotal, 'Parsed total:', totalCount)
+      setTotalCount(totalCount)
     } catch (err) {
       let errorMessage = 'Failed to load leaderboard data'
       
@@ -68,7 +75,7 @@ function App() {
   }
 
   const getTopCardClass = (position) => {
-    const baseClass = "bg-slate-800/90 backdrop-blur-sm border-2 rounded-2xl p-8 transition-all duration-300 hover:scale-105 hover:shadow-2xl cursor-pointer relative overflow-hidden"
+    const baseClass = "bg-slate-800/90 backdrop-blur-sm border-2 rounded-xl p-6 transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl cursor-pointer relative overflow-hidden"
     
     switch (position) {
       case 1:
@@ -135,36 +142,42 @@ function App() {
     <div className="min-h-screen bg-slate-900 text-white">
       {/* Header */}
       <header className="bg-slate-800/95 backdrop-blur-md border-b border-slate-700 sticky top-0 z-50">
-        <div className="container mx-auto px-6 py-6">
+        <div className="container mx-auto px-6 py-6 max-w-7xl">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
             <div className="flex items-center space-x-4">
-              <div className="w-14 h-14 bg-gradient-to-br from-red-500 to-red-600 rounded-xl flex items-center justify-center shadow-lg">
-                <Trophy className="w-8 h-8 text-white" />
+              <div className="w-12 h-12 bg-gradient-to-br from-red-500 to-red-600 rounded-xl flex items-center justify-center shadow-lg">
+                <Trophy className="w-6 h-6 text-white" />
               </div>
-              <div>
-                <h1 className="text-3xl font-bold text-white">
+              <div className="text-center sm:text-left">
+                <h1 className="text-2xl sm:text-3xl font-bold text-white leading-tight">
                   Sri Lanka Valorant Leaderboard
                 </h1>
-                <p className="text-slate-400 text-sm">Updated every 30 minutes</p>
+                <p className="text-slate-400 text-sm text-center sm:text-left">Updated every 30 minutes</p>
               </div>
             </div>
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-3">
+              <a
+                href="/register"
+                className="flex items-center space-x-2 bg-green-600 hover:bg-green-700 px-4 py-2 rounded-lg transition-all duration-200 hover:scale-105 font-semibold text-sm"
+              >
+                <span>Register</span>
+              </a>
               <a
                 href={DISCORD_INVITE}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center space-x-2 bg-indigo-600 hover:bg-indigo-700 px-5 py-3 rounded-xl transition-all duration-200 hover:scale-105 font-semibold"
+                className="flex items-center space-x-2 bg-indigo-600 hover:bg-indigo-700 px-4 py-2 rounded-lg transition-all duration-200 hover:scale-105 font-semibold text-sm"
               >
-                <Users className="w-5 h-5" />
-                <span>Join Discord</span>
+                <Users className="w-4 h-4" />
+                <span>Discord</span>
               </a>
               <a
                 href="https://github.com/naheedroomy/valorantsl"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center space-x-2 bg-slate-700 hover:bg-slate-600 px-5 py-3 rounded-xl transition-all duration-200 hover:scale-105 font-semibold"
+                className="flex items-center space-x-2 bg-slate-700 hover:bg-slate-600 px-4 py-2 rounded-lg transition-all duration-200 hover:scale-105 font-semibold text-sm"
               >
-                <Github className="w-5 h-5" />
+                <Github className="w-4 h-4" />
                 <span>Source</span>
               </a>
             </div>
@@ -173,20 +186,20 @@ function App() {
       </header>
 
       {/* Main Content */}
-      <main className="container mx-auto px-6 py-12">
-        <div className="mb-12 text-center">
-          <p className="text-slate-300 text-lg mb-6">
-            To register yourself on the leaderboard, click the Discord button above to join our server.
+      <main className="container mx-auto px-6 py-8 max-w-7xl">
+        <div className="mb-8 text-center">
+          <p className="text-slate-300 text-base mb-4">
+            To register yourself on the leaderboard, click the Register button above.
           </p>
         </div>
 
         {/* Top 3 Players */}
         {leaderboardData.length >= 3 && currentPage === 1 && (
-          <div className="mb-16">
-            <h2 className="text-4xl font-bold text-center mb-12 bg-gradient-to-r from-yellow-400 via-red-500 to-purple-500 bg-clip-text text-transparent">
+          <div className="mb-12">
+            <h2 className="text-3xl font-bold text-center mb-8 bg-gradient-to-r from-yellow-400 via-red-500 to-purple-500 bg-clip-text text-transparent">
               🏆 Top 3 Champions 🏆
             </h2>
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
               {leaderboardData.slice(0, 3).map((player, index) => {
                 const position = startIndex + index + 1
                 const details = player.rank_details.data
@@ -198,40 +211,40 @@ function App() {
                     className={getTopCardClass(position)}
                     onClick={() => openProfile(player.name, player.tag)}
                   >
-                    <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-white/5 to-transparent rounded-bl-full"></div>
+                    <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-white/5 to-transparent rounded-bl-full"></div>
                     
-                    <div className="flex items-center justify-between mb-8">
-                      <div className="flex items-center space-x-4">
+                    <div className="flex items-center justify-between mb-6">
+                      <div className="flex items-center space-x-3">
                         {getRankIcon(position)}
-                        <span className="text-3xl font-bold text-white">#{position}</span>
+                        <span className="text-2xl font-bold text-white">#{position}</span>
                       </div>
                       <div className="text-right">
-                        <div className="text-2xl font-bold text-white">{details.elo}</div>
-                        <div className="text-sm text-slate-400 uppercase tracking-wider">ELO</div>
+                        <div className="text-xl font-bold text-white">{details.elo}</div>
+                        <div className="text-xs text-slate-400 uppercase tracking-wider">ELO</div>
                       </div>
                     </div>
 
-                    <div className="mb-6">
-                      <h3 className="text-2xl font-bold mb-3 text-white truncate" title={username}>
+                    <div className="mb-4">
+                      <h3 className="text-xl font-bold mb-2 text-white truncate" title={username}>
                         {player.name}
                       </h3>
-                      <div className="flex items-center space-x-3 mb-4">
+                      <div className="flex items-center space-x-3 mb-3">
                         {details.images?.small && (
                           <img 
                             src={details.images.small} 
                             alt={details.currenttierpatched}
-                            className="w-10 h-10 rounded-lg"
+                            className="w-8 h-8 rounded-lg"
                           />
                         )}
-                        <span className="text-xl font-semibold text-slate-200">
+                        <span className="text-lg font-semibold text-slate-200">
                           {details.currenttierpatched}
                         </span>
                       </div>
                     </div>
 
                     <div className="flex items-center justify-center space-x-2 text-slate-300 hover:text-white transition-colors">
-                      <ExternalLink className="w-5 h-5" />
-                      <span className="font-semibold">Click to View Profile</span>
+                      <ExternalLink className="w-4 h-4" />
+                      <span className="font-medium text-sm">Click to View Profile</span>
                     </div>
                   </div>
                 )
@@ -240,11 +253,13 @@ function App() {
           </div>
         )}
 
-        {/* Full Leaderboard */}
-        <div className="bg-slate-800/50 backdrop-blur-md rounded-2xl border border-slate-700 overflow-hidden shadow-2xl">
-          <div className="p-8 border-b border-slate-700 bg-slate-800/70">
-            <h2 className="text-3xl font-bold text-white mb-2">Full Leaderboard</h2>
-            <div className="flex justify-between items-center text-slate-400">
+        {/* Leaderboard */}
+        <div className="bg-slate-800/50 backdrop-blur-md rounded-xl border border-slate-700 overflow-hidden shadow-2xl max-w-5xl mx-auto">
+          <div className="p-6 border-b border-slate-700 bg-slate-800/70">
+            <h2 className="text-2xl font-bold text-white mb-2">
+              {currentPage === 1 ? 'Leaderboard (4th onwards)' : `Leaderboard - Page ${currentPage}`}
+            </h2>
+            <div className="flex justify-between items-center text-slate-400 text-sm">
               <p>Page {currentPage} of {totalPages}</p>
               <p>{totalCount} total players</p>
             </div>
@@ -254,10 +269,10 @@ function App() {
             <table className="w-full">
               <thead className="bg-slate-700/50">
                 <tr>
-                  <th className="text-left py-6 px-8 font-bold text-white text-lg">Rank</th>
-                  <th className="text-left py-6 px-8 font-bold text-white text-lg">Player</th>
-                  <th className="text-left py-6 px-8 font-bold text-white text-lg">Current Rank</th>
-                  <th className="text-left py-6 px-8 font-bold text-white text-lg">ELO</th>
+                  <th className="text-left py-4 px-6 font-bold text-white text-base">Rank</th>
+                  <th className="text-left py-4 px-6 font-bold text-white text-base">Player</th>
+                  <th className="text-left py-4 px-6 font-bold text-white text-base">Current Rank</th>
+                  <th className="text-left py-4 px-6 font-bold text-white text-base">ELO</th>
                 </tr>
               </thead>
               <tbody>
@@ -265,42 +280,43 @@ function App() {
                   const position = startIndex + index + 1
                   const details = player.rank_details.data
                   const username = `${player.name}#${player.tag}`
+                  
+                  // Skip top 3 on first page since they're shown above
+                  if (currentPage === 1 && position <= 3) {
+                    return null
+                  }
 
                   return (
                     <tr 
                       key={player.puuid} 
-                      className={`border-b border-slate-700/50 hover:bg-slate-700/30 transition-all duration-200 cursor-pointer group ${
-                        position <= 3 && currentPage === 1 ? 'bg-gradient-to-r from-yellow-500/5 via-transparent to-transparent' : ''
-                      }`}
+                      className="border-b border-slate-700/50 hover:bg-slate-700/20 transition-all duration-200 cursor-pointer group"
                       onClick={() => openProfile(player.name, player.tag)}
                     >
-                      <td className="py-6 px-8">
+                      <td className="py-4 px-6">
                         <div className="flex items-center space-x-3">
-                          {position <= 3 && currentPage === 1 ? getRankIcon(position) : (
-                            <span className="text-slate-300 font-bold text-xl">#{position}</span>
-                          )}
+                          <span className="text-slate-300 font-bold text-lg">#{position}</span>
                         </div>
                       </td>
-                      <td className="py-6 px-8">
-                        <div className="font-bold text-white text-lg truncate max-w-64 group-hover:text-blue-400 transition-colors" title={username}>
+                      <td className="py-4 px-6">
+                        <div className="font-bold text-white text-base truncate max-w-48 group-hover:text-blue-400 transition-colors" title={username}>
                           {player.name}
                         </div>
-                        <div className="text-slate-400 text-sm">#{player.tag}</div>
+                        <div className="text-slate-400 text-xs">#{player.tag}</div>
                       </td>
-                      <td className="py-6 px-8">
+                      <td className="py-4 px-6">
                         <div className="flex items-center space-x-3">
                           {details.images?.small && (
                             <img 
                               src={details.images.small} 
                               alt={details.currenttierpatched}
-                              className="w-8 h-8 rounded"
+                              className="w-7 h-7 rounded"
                             />
                           )}
-                          <span className="text-slate-200 font-semibold">{details.currenttierpatched}</span>
+                          <span className="text-slate-200 font-semibold text-sm">{details.currenttierpatched}</span>
                         </div>
                       </td>
-                      <td className="py-6 px-8">
-                        <span className="font-bold text-xl text-white">{details.elo}</span>
+                      <td className="py-4 px-6">
+                        <span className="font-bold text-lg text-white">{details.elo}</span>
                       </td>
                     </tr>
                   )
@@ -311,33 +327,29 @@ function App() {
 
           {/* Pagination */}
           {totalPages > 1 && (
-            <div className="flex items-center justify-between p-8 border-t border-slate-700 bg-slate-800/70">
+            <div className="flex items-center justify-center space-x-4 p-6 border-t border-slate-700 bg-slate-800/70">
               <button
                 onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
                 disabled={currentPage === 1}
-                className="flex items-center space-x-3 px-6 py-4 bg-slate-700 hover:bg-slate-600 disabled:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold rounded-xl transition-all duration-200 hover:scale-105 disabled:hover:scale-100"
+                className="flex items-center space-x-2 px-4 py-2 bg-slate-700 hover:bg-slate-600 disabled:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed text-white font-medium rounded-lg transition-all duration-200 hover:scale-105 disabled:hover:scale-100"
               >
-                <ChevronLeft className="w-5 h-5" />
+                <ChevronLeft className="w-4 h-4" />
                 <span>Previous</span>
               </button>
               
-              <div className="flex items-center space-x-6 text-slate-300">
-                <span className="text-lg font-semibold">
+              <div className="flex items-center space-x-4 text-slate-300">
+                <span className="text-base font-medium">
                   Page {currentPage} of {totalPages}
-                </span>
-                <div className="h-6 w-px bg-slate-600"></div>
-                <span className="text-sm">
-                  {totalCount} total players
                 </span>
               </div>
 
               <button
                 onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
                 disabled={currentPage === totalPages}
-                className="flex items-center space-x-3 px-6 py-4 bg-slate-700 hover:bg-slate-600 disabled:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold rounded-xl transition-all duration-200 hover:scale-105 disabled:hover:scale-100"
+                className="flex items-center space-x-2 px-4 py-2 bg-slate-700 hover:bg-slate-600 disabled:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed text-white font-medium rounded-lg transition-all duration-200 hover:scale-105 disabled:hover:scale-100"
               >
                 <span>Next</span>
-                <ChevronRight className="w-5 h-5" />
+                <ChevronRight className="w-4 h-4" />
               </button>
             </div>
           )}
